@@ -157,7 +157,7 @@ public interface IClient extends Serializable {
 		return clientThread;
 	}
 	
-	default Thread createServerThread(Contact contact) {
+	default Thread createServerThread(Contact contact, Client client) {
 		Thread serverThread = new Thread() {
 			public void run() {
 				while (true) {
@@ -171,7 +171,7 @@ public interface IClient extends Serializable {
 						while(true) {
 							ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
 							Block inputBlock = (Block) input.readObject();
-							System.out.println("Message received: " + inputBlock.getMessage());
+							System.out.println("Message received: " + client.decryptMessage(inputBlock.getMessage()));
 						}
 					} catch(Exception e) {
 					}
