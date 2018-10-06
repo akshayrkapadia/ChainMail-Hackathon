@@ -10,7 +10,7 @@ public interface IBlockchain {
 	}
 	
 	default Block createGenesisBlock() {
-		Block genesisBlock = new Block(0, null, "Genesis Block", null);
+		Block genesisBlock = new Block(0, null, null, null);
 		return genesisBlock;
 	}
 

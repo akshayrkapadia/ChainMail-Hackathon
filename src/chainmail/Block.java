@@ -6,11 +6,11 @@ public class Block implements IBlock {
 	
 	private int index;
 	private String previousHash;
-	private String message;
+	private byte[] message;
 	private Date timestamp;
 	private Block next;
 	
-	public Block(int index, String previousHash, String message, Block next) {
+	public Block(int index, String previousHash, byte[] message, Block next) {
 		this.index = index;
 		this.previousHash = previousHash;
 		this.message = message;
@@ -34,7 +34,7 @@ public class Block implements IBlock {
 	}
 
 	@Override
-	public String getMessage() {
+	public byte[] getMessage() {
 		return this.message;
 	}
 

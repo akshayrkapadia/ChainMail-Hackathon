@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -16,6 +17,8 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import javax.crypto.Cipher;
 
 
 public interface IClient extends Serializable {
@@ -49,9 +52,9 @@ public interface IClient extends Serializable {
 		return null;
 	}
 	
-	default void addContact(String name, String ipAddress) {
-		if (this.findContact(name) == null) {
-			this.getContacts().add(new Contact(name, ipAddress));
+	default void addContact(Contact contact) {
+		if (this.findContact(contact.getName()) == null) {
+			this.getContacts().add(contact);
 		}
 	}
 
@@ -99,36 +102,72 @@ public interface IClient extends Serializable {
 		
 	}
 	
-	default Thread createClientThread(Contact contact) {
+	default byte[] encryptMessage(String message, Contact contact) {
+		try {
+			byte[] messageBytes = message.getBytes("UTF8");
+		    Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA1AndMGF1Padding");   
+		    cipher.init(Cipher.ENCRYPT_MODE, contact.getPublicKey());  
+		    return cipher.doFinal(messageBytes);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	default String decryptMessage(byte[] encryptedMessage) {
+		try {
+		    Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA1AndMGF1Padding");   
+		    cipher.init(Cipher.DECRYPT_MODE, this.getPrivateKey());  
+		    return new String(cipher.doFinal(encryptedMessage), "UTF8");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	default Thread createClientThread(Contact contact, Client client) {
 		Thread clientThread = new Thread() {
 			public void run() {
-				try {
-					Socket socket = new Socket(contact.getIPAddress(), 9806);
-					System.out.println("Connected");
-					while(true) {
-	 					ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
-						Scanner scanner = new Scanner(System.in);
-						Block outputBlock = new Block(0, null, scanner.nextLine(), null);
-						output.writeObject(outputBlock);
+				while (true) {
+					try {
+						Socket socket = new Socket(contact.getIPAddress(), 9806);
+						System.out.println("Connected to " + contact.getName() + " at " + contact.getIPAddress());
+						while (true) {
+							try {
+								ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
+								output.writeObject(client.getPublicKey());
+								break;
+							} catch (Exception e) {
+								
+							}
+						}
+						while(true) {
+		 					ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
+							Scanner scanner = new Scanner(System.in);
+							byte[] encryptedMessage = client.encryptMessage(scanner.nextLine(), contact);
+							Block outputBlock = new Block(0, null, encryptedMessage, null);
+							output.writeObject(outputBlock);
+						}
+					} catch(Exception e) {
 					}
-				} catch(Exception e) {
-					e.printStackTrace();
+	
 				}
-
 			}
 		};
 		return clientThread;
 	}
 	
-	default Thread createServerThread() {
+	default Thread createServerThread(Contact contact) {
 		Thread serverThread = new Thread() {
 			public void run() {
 				while (true) {
 					try {
-						System.out.println("Waiting For Clients");
 						ServerSocket serverSocket = new ServerSocket(9806);
 						Socket socket = serverSocket.accept();
-						System.out.println("Connection Established");
+						ObjectInputStream publicKeyInput = new ObjectInputStream(socket.getInputStream());
+						PublicKey publicKey = (PublicKey) publicKeyInput.readObject();
+						contact.setPublicKey(publicKey);
+						System.out.println("Public Key Recieved");
 						while(true) {
 							ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
 							Block inputBlock = (Block) input.readObject();

@@ -8,7 +8,7 @@ public interface IBlock extends Serializable {
 	String getPreviousHash();
 	Date getTimestamp();
 	Block getNext();
-	String getMessage();
+	byte[] getMessage();
 	int getIndex();
 
 }

@@ -1,13 +1,17 @@
 package chainmail;
 
+import java.security.PublicKey;
+
 public class Contact implements IContact {
 	
 	private String name;
 	private String ipAddress;
+	private PublicKey publicKey;
 	
 	public Contact(String name, String ipAddress) {
 		this.name = name;
 		this.ipAddress = ipAddress;
+		this.publicKey = null;
 	}
 
 	@Override
@@ -19,6 +23,18 @@ public class Contact implements IContact {
 	public String getIPAddress() {
 		return this.ipAddress;
 	}
+
+	@Override
+	public PublicKey getPublicKey() {
+		return this.publicKey;
+	}
+
+	@Override
+	public void setPublicKey(PublicKey publicKey) {
+		this.publicKey = publicKey;
+	}
+	
+
 	
 	
 
