@@ -99,11 +99,11 @@ public interface IClient extends Serializable {
 		
 	}
 	
-	default Thread createClientThread(String ipAddress) {
+	default Thread createClientThread(Contact contact) {
 		Thread clientThread = new Thread() {
 			public void run() {
 				try {
-					Socket socket = new Socket(ipAddress, 9806);
+					Socket socket = new Socket(contact.getIPAddress(), 9806);
 					System.out.println("Connected");
 					while(true) {
 	 					ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
@@ -123,18 +123,19 @@ public interface IClient extends Serializable {
 	default Thread createServerThread() {
 		Thread serverThread = new Thread() {
 			public void run() {
-				try {
-					System.out.println("Waiting For Clients");
-					ServerSocket serverSocket = new ServerSocket(9806);
-					Socket socket = serverSocket.accept();
-					System.out.println("Connection Established");
-					while(true) {
-						ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
-						Block inputBlock = (Block) input.readObject();
-						System.out.println("Message received: " + inputBlock.getMessage());
+				while (true) {
+					try {
+						System.out.println("Waiting For Clients");
+						ServerSocket serverSocket = new ServerSocket(9806);
+						Socket socket = serverSocket.accept();
+						System.out.println("Connection Established");
+						while(true) {
+							ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
+							Block inputBlock = (Block) input.readObject();
+							System.out.println("Message received: " + inputBlock.getMessage());
+						}
+					} catch(Exception e) {
 					}
-				} catch(Exception e) {
-					e.printStackTrace();
 				}
 			}
 		};
