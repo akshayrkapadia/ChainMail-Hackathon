@@ -10,11 +10,13 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.SecureRandom;
+import java.security.spec.RSAPrivateKeySpec;
+import java.security.spec.RSAPublicKeySpec;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -29,7 +31,9 @@ public interface IClient extends Serializable {
 	String getIPAddress();
 	PublicKey getPublicKey();
 	PrivateKey getPrivateKey();
-	void setKeys(PrivateKey privateKey, PublicKey publicKey);
+	RSAPublicKeySpec getPublicKeySpec();
+	RSAPrivateKeySpec getPrivateKeySpec();
+	void setKeys(PrivateKey privateKey, PublicKey publicKey, RSAPublicKeySpec publicKeySpec, RSAPrivateKeySpec privateKeySpec);
 	void setName(String name);
 	
 	default String findIPAddress() {
@@ -70,32 +74,34 @@ public interface IClient extends Serializable {
 		}
 	}
 	
-	default void saveKeys(PrivateKey privateKey, PublicKey publicKey) {
-		try {
-			FileOutputStream publicKeyFile = new FileOutputStream("publicKey.ser");
-			FileOutputStream privateKeyFile = new FileOutputStream("privateKey.ser");
-			ObjectOutputStream publicKeyFileObject = new ObjectOutputStream(publicKeyFile);
-			ObjectOutputStream privateKeyFileObject = new ObjectOutputStream(privateKeyFile);
-			publicKeyFileObject.writeObject(publicKey);
-			privateKeyFileObject.writeObject(privateKey);
-			publicKeyFileObject.close();
-			privateKeyFileObject.close();
-			publicKeyFile.close();
-			privateKeyFile.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+//	default void saveKeys(PrivateKey privateKey, PublicKey publicKey) {
+//		try {
+//			FileOutputStream publicKeyFile = new FileOutputStream("publicKey.ser");
+//			FileOutputStream privateKeyFile = new FileOutputStream("privateKey.ser");
+//			ObjectOutputStream publicKeyFileObject = new ObjectOutputStream(publicKeyFile);
+//			ObjectOutputStream privateKeyFileObject = new ObjectOutputStream(privateKeyFile);
+//			publicKeyFileObject.writeObject(publicKey);
+//			privateKeyFileObject.writeObject(privateKey);
+//			publicKeyFileObject.close();
+//			privateKeyFileObject.close();
+//			publicKeyFile.close();
+//			privateKeyFile.close();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	}
 	
 	default void generateKeys() {
 		try {
-			KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance("DSA", "SUN");
-			SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
-			keyGenerator.initialize(1024, random);
+			KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance("RSA");
+			keyGenerator.initialize(2048);
 			KeyPair keyPair = keyGenerator.generateKeyPair();
 			PrivateKey privateKey = keyPair.getPrivate();
 			PublicKey publicKey = keyPair.getPublic();
-			this.setKeys(privateKey, publicKey);
+			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+			RSAPublicKeySpec rsaPublicKeySpec = keyFactory.getKeySpec(publicKey, RSAPublicKeySpec.class);
+			RSAPrivateKeySpec rsaPrivateKeySpec = keyFactory.getKeySpec(privateKey, RSAPrivateKeySpec.class);
+			this.setKeys(privateKey, publicKey, rsaPublicKeySpec, rsaPrivateKeySpec);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -104,9 +110,9 @@ public interface IClient extends Serializable {
 	
 	default byte[] encryptMessage(String message, Contact contact) {
 		try {
-			byte[] messageBytes = message.getBytes("UTF8");
-		    Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA1AndMGF1Padding");   
-		    cipher.init(Cipher.ENCRYPT_MODE, contact.getPublicKey());  
+			byte[] messageBytes = message.getBytes();
+		    Cipher cipher = Cipher.getInstance("RSA");
+		    cipher.init(Cipher.ENCRYPT_MODE, contact.getPublicKey());
 		    return cipher.doFinal(messageBytes);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -116,9 +122,9 @@ public interface IClient extends Serializable {
 	
 	default String decryptMessage(byte[] encryptedMessage) {
 		try {
-		    Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA1AndMGF1Padding");   
+		    Cipher cipher = Cipher.getInstance("RSA");   
 		    cipher.init(Cipher.DECRYPT_MODE, this.getPrivateKey());  
-		    return new String(cipher.doFinal(encryptedMessage), "UTF8");
+		    return new String(cipher.doFinal(encryptedMessage));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

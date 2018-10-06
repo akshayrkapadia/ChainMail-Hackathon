@@ -4,6 +4,8 @@ import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.spec.RSAPrivateKeySpec;
+import java.security.spec.RSAPublicKeySpec;
 import java.util.ArrayList;
 
 public class Client implements IClient {
@@ -14,6 +16,8 @@ public class Client implements IClient {
 	private String ipAddress;
 	private PublicKey publicKey;
 	private PrivateKey privateKey;
+	private RSAPublicKeySpec publicKeySpec;
+	private RSAPrivateKeySpec privateKeySpec;
 	
 	public Client(String name) {
 		try {
@@ -71,16 +75,27 @@ public class Client implements IClient {
 	}
 
 	@Override
-	public void setKeys(PrivateKey privateKey, PublicKey publicKey) {
+	public void setKeys(PrivateKey privateKey, PublicKey publicKey, RSAPublicKeySpec publicKeySpec, RSAPrivateKeySpec privateKeySpec) {
 		this.privateKey = privateKey;
 		this.publicKey = publicKey;
-		
+		this.publicKeySpec = publicKeySpec;
+		this.privateKeySpec = privateKeySpec;	
 	}
 
 	@Override
 	public void setName(String name) {
 		this.name = name;
 		
+	}
+
+	@Override
+	public RSAPublicKeySpec getPublicKeySpec() {
+		return this.publicKeySpec;
+	}
+
+	@Override
+	public RSAPrivateKeySpec getPrivateKeySpec() {
+		return this.privateKeySpec;
 	}
 
 }
