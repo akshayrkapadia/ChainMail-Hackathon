@@ -214,7 +214,7 @@ public interface IClient extends Serializable {
 	}
 	
 	
-	default Thread recievePublicKey(Contact contact, Client client) {
+	default Thread recievePublicKey(Contact contact, Client client, MainFrame mainFrame) {
 		Thread recievePublicKeyThread = new Thread() {
 			public void run() {
 				try {
@@ -226,7 +226,7 @@ public interface IClient extends Serializable {
 					PublicKey publicKey = (PublicKey) input.readObject();
 					contact.setPublicKey(publicKey);
 					System.out.println("Pub recv");
-					socket.close();
+					client.createServerThread(contact, client, mainFrame);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
