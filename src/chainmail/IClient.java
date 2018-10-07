@@ -221,30 +221,31 @@ public interface IClient extends Serializable {
 						Socket socket = serverSocket.accept();
 						System.out.println("Serv conn");
 						ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
-						while (true) {
-							try {
-								Block inputBlock = (Block) input.readObject();
-								String decryptedMessage = client.decryptMessage(inputBlock.getMessage());
-								System.out.println(decryptedMessage);
-								if (decryptedMessage.equals("Confirmed")) {
-									System.out.println("Message Confirmed");
-									Blockchain chat = client.getChat(contact);
-									Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient(), chat.getHead(), inputBlock.getTimestamp());
-									chat.addBlock(newBlock);
-									client.save();
-								} else if (client.mineBlock(inputBlock, contact)) {
-									System.out.println("> " + decryptedMessage);
-									Blockchain chat = client.getChat(contact);
-									Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient(), chat.getHead(), inputBlock.getTimestamp());
-									chat.addBlock(newBlock);
+						try {
+							Block inputBlock = (Block) input.readObject();
+							String decryptedMessage = client.decryptMessage(inputBlock.getMessage());
+							System.out.println(decryptedMessage);
+							if (decryptedMessage.equals("Confirmed")) {
+								System.out.println("Message Confirmed");
+								Blockchain chat = client.getChat(contact);
+								Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient(), chat.getHead(), inputBlock.getTimestamp());
+								chat.addBlock(newBlock);
+								client.save();
+							} else if (client.mineBlock(inputBlock, contact)) {
+								System.out.println("> " + decryptedMessage);
+								Blockchain chat = client.getChat(contact);
+								Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient(), chat.getHead(), inputBlock.getTimestamp());
+								chat.addBlock(newBlock);
+								while (true) {
 									ObjectOutputStream confirmation = new ObjectOutputStream(socket.getOutputStream());
 									confirmation.writeObject(new Block(0, client.encryptMessage("Confirmed", contact), contact, chat.getHead().getNext()));
-									client.save();
-									mainFrame.update(client.getChat(contact));
+									break;
 								}
-							} catch(Exception e) {
-								e.printStackTrace();
+								client.save();
+								mainFrame.update(client.getChat(contact));
 							}
+						} catch(Exception e) {
+							e.printStackTrace();
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
