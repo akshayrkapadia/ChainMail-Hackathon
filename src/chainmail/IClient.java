@@ -35,6 +35,7 @@ public interface IClient extends Serializable {
 	RSAPrivateKeySpec getPrivateKeySpec();
 	void setKeys(PrivateKey privateKey, PublicKey publicKey, RSAPublicKeySpec publicKeySpec, RSAPrivateKeySpec privateKeySpec);
 	void setName(String name);
+	void startChat(Contact contact);
 	
 	default String findIPAddress() {
 		try {
@@ -152,30 +153,57 @@ public interface IClient extends Serializable {
 		return false;
 	}
 	
-	default Thread createClientThread(Contact contact, Client client) {
+
+	
+	default Thread sendPublicKey(Contact contact, Client client) {
+		Thread sendPubKeyThread = new Thread() {
+			public void run() {
+				while (true) {
+					try {
+						Socket socket = new Socket(contact.getIPAddress(), 9806);
+						System.out.println("Connected to " + contact.getName() + " at " + contact.getIPAddress());
+						ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
+						output.writeObject(client.getPublicKey());
+						client.createClientThread(contact, client, socket, output);
+					} catch (Exception e) {
+					}
+				}
+			}
+		};
+		return sendPubKeyThread;
+	}
+	
+	
+	default Thread recievePublicKey(Contact contact, Client client) {
+		Thread recievePublicKeyThread = new Thread() {
+			public void run() {
+				while (true) {
+					try {
+						ServerSocket serverSocket = new ServerSocket(9806);
+						Socket socket = serverSocket.accept();
+						System.out.println("Connected to " + contact.getName() + " at " + contact.getIPAddress());
+						ObjectInputStream publicKeyInput = new ObjectInputStream(socket.getInputStream());
+						PublicKey publicKey = (PublicKey) publicKeyInput.readObject();
+						contact.setPublicKey(publicKey);
+						System.out.println("Public key recieved");
+						client.createServerThread(contact, client, socket).run();
+					} catch (Exception e) {
+					}
+				}
+			}
+		};
+		return recievePublicKeyThread;
+	}
+	
+	default Thread createClientThread(Contact contact, Client client, Socket socket, ObjectOutputStream output) {
 		Thread clientThread = new Thread() {
 			public void run() {
 				while (true) {
 					try {
-						if (client.getChat(contact) == null) {
-							client.addChat(new Blockchain(contact));
-						}
-						this.wait(5000);
-						Socket socket = new Socket(contact.getIPAddress(), 9806);
-						System.out.println("Connected to " + contact.getName() + " at " + contact.getIPAddress());
-						try {
-							ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
-							output.writeObject(client.getPublicKey());
-						} catch (Exception e) {
-							
-						}
-						while(true) {
-		 					ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
-							Scanner scanner = new Scanner(System.in);
-							byte[] encryptedMessage = client.encryptMessage(scanner.nextLine(), contact);
-							Block outputBlock = new Block(0, encryptedMessage, contact);
-							output.writeObject(outputBlock);
-						}
+						Scanner scanner = new Scanner(System.in);
+						byte[] encryptedMessage = client.encryptMessage(scanner.nextLine(), contact);
+						Block outputBlock = new Block(0, encryptedMessage, contact);
+						output.writeObject(outputBlock);
 					} catch(Exception e) {
 					}
 	
@@ -185,34 +213,26 @@ public interface IClient extends Serializable {
 		return clientThread;
 	}
 	
-	default Thread createServerThread(Contact contact, Client client) {
+	default Thread createServerThread(Contact contact, Client client, Socket socket) {
 		Thread serverThread = new Thread() {
 			public void run() {
 				while (true) {
 					try {
-						ServerSocket serverSocket = new ServerSocket(9806);
-						Socket socket = serverSocket.accept();
-						ObjectInputStream publicKeyInput = new ObjectInputStream(socket.getInputStream());
-						PublicKey publicKey = (PublicKey) publicKeyInput.readObject();
-						contact.setPublicKey(publicKey);
-						System.out.println("Public Key Recieved");
-						while(true) {
-							ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
-							Block inputBlock = (Block) input.readObject();
-							String decryptedMessage = client.decryptMessage(inputBlock.getMessage());
-							if (decryptedMessage.equals("Confirmed")) {
-								Blockchain chat = client.getChat(contact);
-								Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient(), inputBlock.getTimestamp());
-								chat.addBlock(newBlock);
-							} else if (client.mineBlock(inputBlock)) {
-								Blockchain chat = client.getChat(contact);
-								Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient(), inputBlock.getTimestamp());
-								chat.addBlock(newBlock);
-								ObjectOutputStream confirmation = new ObjectOutputStream(socket.getOutputStream());
-								confirmation.writeObject(new Block(0, client.encryptMessage("Confirmed", contact), contact));
-							}
-							System.out.println("Message received: " + decryptedMessage);
+						ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
+						Block inputBlock = (Block) input.readObject();
+						String decryptedMessage = client.decryptMessage(inputBlock.getMessage());
+						if (decryptedMessage.equals("Confirmed")) {
+							Blockchain chat = client.getChat(contact);
+							Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient(), inputBlock.getTimestamp());
+							chat.addBlock(newBlock);
+						} else if (client.mineBlock(inputBlock)) {
+							Blockchain chat = client.getChat(contact);
+							Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient(), inputBlock.getTimestamp());
+							chat.addBlock(newBlock);
+							ObjectOutputStream confirmation = new ObjectOutputStream(socket.getOutputStream());
+							confirmation.writeObject(new Block(0, client.encryptMessage("Confirmed", contact), contact));
 						}
+						System.out.println("Message received: " + decryptedMessage);
 					} catch(Exception e) {
 					}
 				}

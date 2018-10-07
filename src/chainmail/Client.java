@@ -97,5 +97,13 @@ public class Client implements IClient {
 	public RSAPrivateKeySpec getPrivateKeySpec() {
 		return this.privateKeySpec;
 	}
+	
+	public  void startChat(Contact contact) {
+		if (this.getChat(contact) == null) {
+			this.addChat(new Blockchain(contact));
+		}
+		this.recievePublicKey(contact, this).run();
+		this.sendPublicKey(contact, this).run();		
+	}
 
 }
