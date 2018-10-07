@@ -113,9 +113,9 @@ private MainFrame mainFrame;
 					} else {
 						Contact contact = this.getMainFrame().getClient().findContact(contactName);
 						this.getMainFrame().getClient().startChat(contact);
-						this.getMainFrame().getClient().recievePublicKey(contact, this.getMainFrame().getClient());
-						this.getMainFrame().getClient().sendPulicKey(contact, this.getMainFrame().getClient());
-						this.getMainFrame().getClient().createServerThread(contact, this.getMainFrame().getClient(), this.getMainFrame());
+						this.getMainFrame().getClient().recievePublicKey(contact, this.getMainFrame().getClient()).start();
+						this.getMainFrame().getClient().sendPulicKey(contact, this.getMainFrame().getClient()).start();
+						this.getMainFrame().getClient().createServerThread(contact, this.getMainFrame().getClient(), this.getMainFrame()).start();
 						this.getMainFrame().update(this.getMainFrame().getClient().getChat(contact));
 						this.getMainFrame().getClient().save();
 						break;
