@@ -209,8 +209,8 @@ public interface IClient extends Serializable {
 									chat.addBlock(newBlock);
 									ObjectOutputStream confirmation = new ObjectOutputStream(socket.getOutputStream());
 									confirmation.writeObject(new Block(0, client.encryptMessage("Confirmed", contact), contact));
+									System.out.println("Message received: " + decryptedMessage);
 								}
-								System.out.println("Message received: " + decryptedMessage);
 							} catch(Exception e) {
 								e.printStackTrace();
 							}
