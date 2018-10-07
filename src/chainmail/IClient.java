@@ -74,6 +74,9 @@ public interface IClient extends Serializable {
 		}
 	}
 	
+	default void addChat(Blockchain chat) {
+		this.getChats().add(chat);
+	}
 //	default void saveKeys(PrivateKey privateKey, PublicKey publicKey) {
 //		try {
 //			FileOutputStream publicKeyFile = new FileOutputStream("publicKey.ser");
@@ -154,6 +157,9 @@ public interface IClient extends Serializable {
 			public void run() {
 				while (true) {
 					try {
+						if (client.getChat(contact) == null) {
+							client.addChat(new Blockchain(contact));
+						}
 						Socket socket = new Socket(contact.getIPAddress(), 9806);
 						System.out.println("Connected to " + contact.getName() + " at " + contact.getIPAddress());
 						while (true) {
