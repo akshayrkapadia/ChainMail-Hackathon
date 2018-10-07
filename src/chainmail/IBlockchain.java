@@ -12,7 +12,7 @@ public interface IBlockchain {
 	}
 	
 	default Block createGenesisBlock() {
-		Block genesisBlock = new Block(0, null, null);
+		Block genesisBlock = new Block(0, "".getBytes(), null);
 		return genesisBlock;
 	}
 	

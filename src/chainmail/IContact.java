@@ -1,8 +1,9 @@
 package chainmail;
 
+import java.io.Serializable;
 import java.security.PublicKey;
 
-public interface IContact {
+public interface IContact extends Serializable {
 	
 	String getName();
 	String getIPAddress();
