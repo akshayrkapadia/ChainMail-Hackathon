@@ -154,7 +154,7 @@ public interface IClient extends Serializable {
 	
 
 	
-	default Thread clientThread(Contact contact, Client client) {
+	default Thread createClientThread(Contact contact, Client client) {
 		Thread sendPublicKeyThread = new Thread() {
 			public void run() {
 				while (true) {
@@ -181,7 +181,7 @@ public interface IClient extends Serializable {
 	}
 	
 	
-	default Thread serverThread(Contact contact, Client client) {
+	default Thread createServerThread(Contact contact, Client client) {
 		Thread recievePublicKeyThread = new Thread() {
 			public void run() {
 				while (true) {
