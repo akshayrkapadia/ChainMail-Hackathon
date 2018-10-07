@@ -95,31 +95,6 @@ public interface IClient extends Serializable {
 		
 	}
 	
-//	default RSAPublicKeySpec getPubKeySpec() {
-//		try {
-//			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-//			RSAPublicKeySpec rsaPublicKeySpec = keyFactory.getKeySpec(this.getPublicKey(), RSAPublicKeySpec.class);
-//			return rsaPublicKeySpec;
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		return null;
-//	}
-//	
-//	
-//	default RSAPrivateKeySpec getPriKeySpec() {
-//		try {
-//			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-//			RSAPrivateKeySpec rsaPrivateKeySpec = keyFactory.getKeySpec(this.getPrivateKey(), RSAPrivateKeySpec.class);
-//			return rsaPrivateKeySpec;
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		return null;
-//	}
-	
 	default byte[] encryptMessage(String message, Contact contact) {
 		try {
 			byte[] messageBytes = message.getBytes();
@@ -241,14 +216,16 @@ public interface IClient extends Serializable {
 			public void run() {
 				while (true) {
 					try {
+						System.out.println("main Serv started");
 						ServerSocket serverSocket = new ServerSocket(9806);
 						Socket socket = serverSocket.accept();
-						ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
 						System.out.println("Serv conn");
+						ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
 						while (true) {
 							try {
 								Block inputBlock = (Block) input.readObject();
 								String decryptedMessage = client.decryptMessage(inputBlock.getMessage());
+								System.out.println(decryptedMessage);
 								if (decryptedMessage.equals("Confirmed")) {
 									System.out.println("Message Confirmed");
 									Blockchain chat = client.getChat(contact);
