@@ -1,30 +1,32 @@
 package chainmail;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class Block implements IBlock {
 	
 	private int index;
-	private String previousHash;
+	private byte[] previousHash;
 	private byte[] message;
-	private Date timestamp;
+	private LocalDateTime timestamp;
 	private Block next;
+	private Contact recipient;
 	
-	public Block(int index, String previousHash, byte[] message, Block next) {
+	public Block(int index, byte[] message, Contact recipient) {
 		this.index = index;
-		this.previousHash = previousHash;
+		this.previousHash = next.hash();
 		this.message = message;
-		this.timestamp = new Date();
-		this.next = next;
+		this.timestamp = LocalDateTime.now();
+		this.recipient = recipient;
 	}
 
 	@Override
-	public String getPreviousHash() {
+	public byte[] getPreviousHash() {
 		return this.previousHash;
 	}
 
 	@Override
-	public Date getTimestamp() {
+	public LocalDateTime getTimestamp() {
 		return this.timestamp;
 	}
 
@@ -42,6 +44,18 @@ public class Block implements IBlock {
 	public int getIndex() {
 		return this.index;
 	}
+
+	@Override
+	public Contact getRecipient() {
+		return this.recipient;
+	}
+
+	@Override
+	public void setNext(Block block) {
+		this.next = block;
+	}
+	
+	
 
 
 }

@@ -13,6 +13,13 @@ public class Contact implements IContact {
 		this.ipAddress = ipAddress;
 		this.publicKey = null;
 	}
+	
+	public Contact(String name, String ipAddress, PublicKey publicKey) {
+		this.name = name;
+		this.ipAddress = ipAddress;
+		this.publicKey = publicKey;
+	}
+
 
 	@Override
 	public String getName() {

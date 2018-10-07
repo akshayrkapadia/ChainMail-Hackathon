@@ -3,9 +3,11 @@ package chainmail;
 public class Blockchain implements IBlockchain {
 	
 	private Block head;
+	private Contact contact;
 	
-	public Blockchain(Block head) {
-		this.head = this.createGenesisBlock();
+	public Blockchain(Contact recipient) {
+		this.head = this.createGenesisBlock(recipient);
+		this.contact = contact;
 	}
 
 	@Override
@@ -16,6 +18,11 @@ public class Blockchain implements IBlockchain {
 	@Override
 	public void setHead(Block block) {
 		this.head = block;
+	}
+
+	@Override
+	public Contact getContact() {
+		return this.contact;
 	}
 
 }

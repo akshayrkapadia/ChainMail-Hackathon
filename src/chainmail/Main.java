@@ -13,7 +13,7 @@ public class Main {
 //		System.out.println(client.getIPAddress());
 		
 		client.createServerThread(ubuntu, client).start();
-		client.createClientThread(client.findContact("Ubuntu"), client).start();
+		client.createClientThread(ubuntu, client).start();
 	}
 
 }

@@ -56,6 +56,10 @@ public interface IClient extends Serializable {
 		return null;
 	}
 	
+	default Contact getMe() {
+		return new Contact(this.getName(), this.getIPAddress(), this.getPublicKey());
+	}
+	
 	default void addContact(Contact contact) {
 		if (this.findContact(contact.getName()) == null) {
 			this.getContacts().add(contact);
@@ -131,6 +135,24 @@ public interface IClient extends Serializable {
 		return null;
 	}
 	
+	default Blockchain getChat(Contact contact) {
+		for (Blockchain chat : this.getChats()) {
+			if (chat.getContact().getName().equals(contact.getName())) {
+				return chat;
+			}
+		}
+		return null;
+	}
+	
+	default boolean mineBlock(Block block) {
+		Blockchain chat = this.getChat(block.getRecipient());
+		Block head = chat.getHead();
+		if (new String(block.getPreviousHash()).equals(new String(head.hash()))) {
+			return true;
+		}
+		return false;
+	}
+	
 	default Thread createClientThread(Contact contact, Client client) {
 		Thread clientThread = new Thread() {
 			public void run() {
@@ -151,7 +173,7 @@ public interface IClient extends Serializable {
 		 					ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
 							Scanner scanner = new Scanner(System.in);
 							byte[] encryptedMessage = client.encryptMessage(scanner.nextLine(), contact);
-							Block outputBlock = new Block(0, null, encryptedMessage, null);
+							Block outputBlock = new Block(0, encryptedMessage, contact);
 							output.writeObject(outputBlock);
 						}
 					} catch(Exception e) {
@@ -177,7 +199,19 @@ public interface IClient extends Serializable {
 						while(true) {
 							ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
 							Block inputBlock = (Block) input.readObject();
-							System.out.println("Message received: " + client.decryptMessage(inputBlock.getMessage()));
+							String decryptedMessage = client.decryptMessage(inputBlock.getMessage());
+							if (decryptedMessage.equals("Confirmed")) {
+								Blockchain chat = client.getChat(contact);
+								Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient());
+								chat.addBlock(newBlock);
+							} else if (client.mineBlock(inputBlock)) {
+								Blockchain chat = client.getChat(contact);
+								Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient());
+								chat.addBlock(newBlock);
+								ObjectOutputStream confirmation = new ObjectOutputStream(socket.getOutputStream());
+								confirmation.writeObject(new Block(0, client.encryptMessage("Confirmed", contact), contact));
+							}
+							System.out.println("Message received: " + decryptedMessage);
 						}
 					} catch(Exception e) {
 					}

@@ -4,14 +4,32 @@ public interface IBlockchain {
 	
 	Block getHead();
 	void setHead(Block block);
+	Contact getContact();
 	
 	default void addBlock(Block block) {
+		block.setNext(this.getHead());
 		this.setHead(block);
 	}
 	
-	default Block createGenesisBlock() {
-		Block genesisBlock = new Block(0, null, null, null);
+	default Block createGenesisBlock(Contact recipient) {
+		Block genesisBlock = new Block(0, null, recipient);
 		return genesisBlock;
+	}
+	
+	default int length() {
+		if (this.getHead().getNext() == null) {
+			return 1;
+		} else {
+			return 1 + this.length(this.getHead().getNext());
+		}
+	}
+	
+	default int length(Block block) {
+		if (block.getNext() == null) {
+			return 1;
+		} else {
+			return 1 + this.length(block.getNext());
+		}
 	}
 
 }
