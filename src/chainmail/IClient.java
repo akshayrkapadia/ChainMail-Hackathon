@@ -160,7 +160,6 @@ public interface IClient extends Serializable {
 				while (true) {
 					try {
 						Socket socket = new Socket(contact.getIPAddress(), 9806);
-						System.out.println("Connected to " + contact.getName() + " at " + contact.getIPAddress());
 						ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
 						output.writeObject(client.getPublicKey());
 						client.createClientThread(contact, client, socket, output).start();
@@ -182,7 +181,6 @@ public interface IClient extends Serializable {
 						ServerSocket serverSocket = new ServerSocket(9806);
 						Socket socket = serverSocket.accept();
 						System.out.println("Connected to " + contact.getName() + " at " + contact.getIPAddress());
-						this.wait(5000);
 						ObjectInputStream publicKeyInput = new ObjectInputStream(socket.getInputStream());
 						PublicKey publicKey = (PublicKey) publicKeyInput.readObject();
 						contact.setPublicKey(publicKey);
