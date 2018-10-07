@@ -173,6 +173,7 @@ public interface IClient extends Serializable {
 							output.writeObject(outputBlock);
 						}
 					} catch(Exception e) {
+						e.printStackTrace();
 					}
 	
 				}
@@ -198,11 +199,11 @@ public interface IClient extends Serializable {
 							String decryptedMessage = client.decryptMessage(inputBlock.getMessage());
 							if (decryptedMessage.equals("Confirmed")) {
 								Blockchain chat = client.getChat(contact);
-								Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient());
+								Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient(), inputBlock.getTimestamp());
 								chat.addBlock(newBlock);
 							} else if (client.mineBlock(inputBlock)) {
 								Blockchain chat = client.getChat(contact);
-								Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient());
+								Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient(), inputBlock.getTimestamp());
 								chat.addBlock(newBlock);
 								ObjectOutputStream confirmation = new ObjectOutputStream(socket.getOutputStream());
 								confirmation.writeObject(new Block(0, client.encryptMessage("Confirmed", contact), contact));

@@ -14,10 +14,19 @@ public class Block implements IBlock {
 	
 	public Block(int index, byte[] message, Contact recipient) {
 		this.index = index;
-		this.previousHash = next.hash();
+		if (this.index == 0) {
+			this.previousHash = this.hash();
+		} else {
+			this.previousHash = next.hash();
+		}
 		this.message = message;
 		this.timestamp = LocalDateTime.now();
 		this.recipient = recipient;
+	}
+	
+	public Block(int index, byte[] message, Contact recipient, LocalDateTime timestamp) {
+		this(index, message, recipient);
+		this.timestamp = timestamp;
 	}
 
 	@Override
