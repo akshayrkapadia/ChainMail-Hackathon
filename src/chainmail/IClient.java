@@ -151,6 +151,7 @@ public interface IClient extends Serializable {
 						ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
 						output.writeObject(client.getPublicKey());
 						System.out.println("Pub sent");
+						client.createClientThread(contact, client, "Hello");						
 						break;
 					} catch (Exception e) {
 						e.printStackTrace();

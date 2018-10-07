@@ -107,7 +107,7 @@ private MainFrame mainFrame;
 						options[i] = optionsList.get(i);
 					}
 					String contactName;
-					contactName = (String)JOptionPane.showInputDialog( null, "Importance", "Importance", JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+					contactName = (String)JOptionPane.showInputDialog( null, "Contact", "Contact", JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 					if (contactName == null) {
 						break;
 					} else {
