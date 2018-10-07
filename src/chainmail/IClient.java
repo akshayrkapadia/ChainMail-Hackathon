@@ -159,12 +159,12 @@ public interface IClient extends Serializable {
 			public void run() {
 				while (true) {
 					try {
-						System.out.println("Client Started");
 						Socket socket = new Socket(contact.getIPAddress(), 9806);
 						System.out.println("Connected to " + contact.getName() + " at " + contact.getIPAddress());
 						ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
 						output.writeObject(client.getPublicKey());
-						client.createClientThread(contact, client, socket, output).start();;
+						client.createClientThread(contact, client, socket, output).start();
+						break;
 					} catch (Exception e) {
 					}
 				}
@@ -179,7 +179,6 @@ public interface IClient extends Serializable {
 			public void run() {
 				while (true) {
 					try {
-						System.out.println("Server Started");
 						ServerSocket serverSocket = new ServerSocket(9806);
 						Socket socket = serverSocket.accept();
 						System.out.println("Connected to " + contact.getName() + " at " + contact.getIPAddress());
@@ -188,6 +187,7 @@ public interface IClient extends Serializable {
 						contact.setPublicKey(publicKey);
 						System.out.println("Public key recieved");
 						client.createServerThread(contact, client, socket).start();
+						break;
 					} catch (Exception e) {
 					}
 				}
