@@ -151,7 +151,6 @@ public interface IClient extends Serializable {
 						ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
 						output.writeObject(client.getPublicKey());
 						System.out.println("Pub sent");
-						client.createClientThread(contact, client, "Hello");						
 						break;
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -161,7 +160,6 @@ public interface IClient extends Serializable {
 		};
 		return sendPublicKeyThread;
 	}
-	
 	
 	default Thread createClientThread(Contact contact, Client client, String message) {
 		Thread clientThread = new Thread() {
@@ -202,7 +200,7 @@ public interface IClient extends Serializable {
 					PublicKey publicKey = (PublicKey) input.readObject();
 					contact.setPublicKey(publicKey);
 					System.out.println("Pub recv");
-					client.createServerThread(contact, client, mainFrame);
+					client.createServerThread(contact, client, mainFrame).start();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
