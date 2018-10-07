@@ -143,8 +143,8 @@ public interface IClient extends Serializable {
 		return null;
 	}
 	
-	default boolean mineBlock(Block block) {
-		Blockchain chat = this.getChat(block.getRecipient());
+	default boolean mineBlock(Block block, Contact contact) {
+		Blockchain chat = this.getChat(contact);
 		if (chat != null && chat.getHead() != null) {
 			Block head = chat.getHead();
 			if (new String(block.getPreviousHash()).equals(new String(head.hash()))) {
@@ -171,12 +171,10 @@ public interface IClient extends Serializable {
 								Block outputBlock = new Block(0, encryptedMessage, contact);
 								output.writeObject(outputBlock);
 							} catch(Exception e) {
-								e.printStackTrace();
 							}
 			
 						}
 					} catch (Exception e) {
-						e.printStackTrace();
 					}
 				}
 			}
@@ -206,7 +204,7 @@ public interface IClient extends Serializable {
 									Blockchain chat = client.getChat(contact);
 									Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient(), inputBlock.getTimestamp());
 									chat.addBlock(newBlock);
-								} else if (client.mineBlock(inputBlock)) {
+								} else if (client.mineBlock(inputBlock, contact)) {
 									Blockchain chat = client.getChat(contact);
 									Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient(), inputBlock.getTimestamp());
 									chat.addBlock(newBlock);
@@ -217,11 +215,9 @@ public interface IClient extends Serializable {
 									System.out.println("Failed");
 								}
 							} catch(Exception e) {
-								e.printStackTrace();
 							}
 						}
 					} catch (Exception e) {
-						e.printStackTrace();
 					}
 				}
 			}

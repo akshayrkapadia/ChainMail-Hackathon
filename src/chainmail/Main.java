@@ -11,6 +11,7 @@ public class Main {
 		
 		
 		System.out.println(client.getIPAddress());
+		System.out.println(client.getChats().size());
 		
 		client.startChat(ubuntu);
 	}
