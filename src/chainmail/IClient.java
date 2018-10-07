@@ -160,6 +160,7 @@ public interface IClient extends Serializable {
 						if (client.getChat(contact) == null) {
 							client.addChat(new Blockchain(contact));
 						}
+						this.wait(10);
 						Socket socket = new Socket(contact.getIPAddress(), 9806);
 						System.out.println("Connected to " + contact.getName() + " at " + contact.getIPAddress());
 						while (true) {
@@ -179,7 +180,6 @@ public interface IClient extends Serializable {
 							output.writeObject(outputBlock);
 						}
 					} catch(Exception e) {
-						e.printStackTrace();
 					}
 	
 				}
