@@ -162,7 +162,9 @@ public interface IClient extends Serializable {
 						Socket socket = new Socket(contact.getIPAddress(), 9806);
 						ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
 						output.writeObject(client.getPublicKey());
-						client.createClientThread(contact, client, socket, output).start();
+						Thread clientThread = client.createClientThread(contact, client, output);
+						clientThread.start();
+						clientThread.join();
 						break;
 					} catch (Exception e) {
 					}
@@ -181,11 +183,13 @@ public interface IClient extends Serializable {
 						ServerSocket serverSocket = new ServerSocket(9806);
 						Socket socket = serverSocket.accept();
 						System.out.println("Connected to " + contact.getName() + " at " + contact.getIPAddress());
-						ObjectInputStream publicKeyInput = new ObjectInputStream(socket.getInputStream());
-						PublicKey publicKey = (PublicKey) publicKeyInput.readObject();
+						ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
+						PublicKey publicKey = (PublicKey) input.readObject();
 						contact.setPublicKey(publicKey);
 						System.out.println("Public key recieved");
-						client.createServerThread(contact, client, socket).start();
+						Thread serverThread = client.createServerThread(contact, client, socket);
+						serverThread.start();
+						serverThread.join();
 						break;
 					} catch (Exception e) {
 					}
@@ -195,7 +199,7 @@ public interface IClient extends Serializable {
 		return recievePublicKeyThread;
 	}
 	
-	default Thread createClientThread(Contact contact, Client client, Socket socket, ObjectOutputStream output) {
+	default Thread createClientThread(Contact contact, Client client, ObjectOutputStream output) {
 		Thread clientThread = new Thread() {
 			public void run() {
 				while (true) {
@@ -234,6 +238,7 @@ public interface IClient extends Serializable {
 						}
 						System.out.println("Message received: " + decryptedMessage);
 					} catch(Exception e) {
+						e.printStackTrace();
 					}
 				}
 			}
