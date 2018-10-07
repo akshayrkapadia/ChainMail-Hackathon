@@ -168,7 +168,6 @@ public interface IClient extends Serializable {
 					try {
 						Socket socket = new Socket(contact.getIPAddress(), 9807);
 						ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
-						output.writeObject(client.getPublicKey());
 						try {
 							byte[] encryptedMessage = client.encryptMessage(message, contact);
 							Block outputBlock = new Block(0, encryptedMessage, contact, client.getChat(contact).getHead());
@@ -200,7 +199,6 @@ public interface IClient extends Serializable {
 					PublicKey publicKey = (PublicKey) input.readObject();
 					contact.setPublicKey(publicKey);
 					System.out.println("Pub recv");
-					socket.close();
 					client.createServerThread(contact, client, mainFrame).start();
 				} catch (Exception e) {
 					e.printStackTrace();
