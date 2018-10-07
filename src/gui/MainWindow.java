@@ -18,6 +18,7 @@ public class MainWindow extends JFrame {
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setTitle("ChainMail");
+		// Icon made by Freepik from www.flaticon.com 
 		this.setIconImage(new ImageIcon(getClass().getResource("/images/icon.png")).getImage());
 		
 		MainFrame mainFrame = new MainFrame(this);

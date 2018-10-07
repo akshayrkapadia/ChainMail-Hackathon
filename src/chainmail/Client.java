@@ -8,6 +8,8 @@ import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 public class Client implements IClient {
 	
 	private String name;
@@ -17,7 +19,7 @@ public class Client implements IClient {
 	private PublicKey publicKey;
 	private PrivateKey privateKey;
 	
-	public Client(String name) {
+	public Client() {
 		try {
 			FileInputStream file = new FileInputStream("ChainMail.ser");
 			ObjectInputStream object = new ObjectInputStream(file);
@@ -31,11 +33,16 @@ public class Client implements IClient {
 			this.publicKey = client.getPublicKey();
 			this.privateKey = client.getPrivateKey();
 		} catch (Exception e) {
-			this.name = null;
+			while (true) {
+				String name = JOptionPane.showInputDialog("Name");
+				this.name = name;
+				break;
+			}
 			this.contacts = new ArrayList<Contact>();
 			this.chats = new ArrayList<Blockchain>();
 			this.ipAddress = this.findIPAddress();
 			this.generateKeys();
+			this.save();
 		}
 	}
 
