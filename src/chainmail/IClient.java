@@ -167,7 +167,7 @@ public interface IClient extends Serializable {
 		return false;
 	}
 	
-	default Thread sendPulicKey(Contact contact, Client client) {
+	default Thread sendPublicKey(Contact contact, Client client) {
 		Thread sendPublicKeyThread = new Thread() {
 			public void run() {
 				while (true) {
@@ -217,20 +217,17 @@ public interface IClient extends Serializable {
 	default Thread recievePublicKey(Contact contact, Client client) {
 		Thread recievePublicKeyThread = new Thread() {
 			public void run() {
-				while (true) {
-					try {
-						System.out.println("Started pub serv");
-						ServerSocket serverSocket = new ServerSocket(9806);
-						Socket socket = serverSocket.accept();
-						System.out.println("Pub conn");
-						ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
-						PublicKey publicKey = (PublicKey) input.readObject();
-						contact.setPublicKey(publicKey);
-						System.out.println("Pub recv");
-						break;
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+				try {
+					System.out.println("Started pub serv");
+					ServerSocket serverSocket = new ServerSocket(9806);
+					Socket socket = serverSocket.accept();
+					System.out.println("Pub conn");
+					ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
+					PublicKey publicKey = (PublicKey) input.readObject();
+					contact.setPublicKey(publicKey);
+					System.out.println("Pub recv");
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 		};
