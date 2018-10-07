@@ -15,6 +15,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.ArrayList;
@@ -34,9 +35,7 @@ public interface IClient extends Serializable {
 	String getIPAddress();
 	PublicKey getPublicKey();
 	PrivateKey getPrivateKey();
-	RSAPublicKeySpec getPublicKeySpec();
-	RSAPrivateKeySpec getPrivateKeySpec();
-	void setKeys(PrivateKey privateKey, PublicKey publicKey, RSAPublicKeySpec publicKeySpec, RSAPrivateKeySpec privateKeySpec);
+	void setKeys(PrivateKey privateKey, PublicKey publicKey);
 	void setName(String name);
 	void startChat(Contact contact);
 	
@@ -89,15 +88,37 @@ public interface IClient extends Serializable {
 			KeyPair keyPair = keyGenerator.generateKeyPair();
 			PrivateKey privateKey = keyPair.getPrivate();
 			PublicKey publicKey = keyPair.getPublic();
-			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-			RSAPublicKeySpec rsaPublicKeySpec = keyFactory.getKeySpec(publicKey, RSAPublicKeySpec.class);
-			RSAPrivateKeySpec rsaPrivateKeySpec = keyFactory.getKeySpec(privateKey, RSAPrivateKeySpec.class);
-			this.setKeys(privateKey, publicKey, rsaPublicKeySpec, rsaPrivateKeySpec);
+			this.setKeys(privateKey, publicKey);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
 	}
+	
+//	default RSAPublicKeySpec getPubKeySpec() {
+//		try {
+//			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+//			RSAPublicKeySpec rsaPublicKeySpec = keyFactory.getKeySpec(this.getPublicKey(), RSAPublicKeySpec.class);
+//			return rsaPublicKeySpec;
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		return null;
+//	}
+//	
+//	
+//	default RSAPrivateKeySpec getPriKeySpec() {
+//		try {
+//			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+//			RSAPrivateKeySpec rsaPrivateKeySpec = keyFactory.getKeySpec(this.getPrivateKey(), RSAPrivateKeySpec.class);
+//			return rsaPrivateKeySpec;
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		return null;
+//	}
 	
 	default byte[] encryptMessage(String message, Contact contact) {
 		try {
