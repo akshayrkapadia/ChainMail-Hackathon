@@ -160,17 +160,14 @@ public interface IClient extends Serializable {
 						if (client.getChat(contact) == null) {
 							client.addChat(new Blockchain(contact));
 						}
-						this.wait(10);
+						this.wait(5000);
 						Socket socket = new Socket(contact.getIPAddress(), 9806);
 						System.out.println("Connected to " + contact.getName() + " at " + contact.getIPAddress());
-						while (true) {
-							try {
-								ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
-								output.writeObject(client.getPublicKey());
-								break;
-							} catch (Exception e) {
-								
-							}
+						try {
+							ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
+							output.writeObject(client.getPublicKey());
+						} catch (Exception e) {
+							
 						}
 						while(true) {
 		 					ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
