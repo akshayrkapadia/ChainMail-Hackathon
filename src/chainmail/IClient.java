@@ -145,7 +145,7 @@ public interface IClient extends Serializable {
 	
 	default boolean mineBlock(Block block) {
 		Blockchain chat = this.getChat(block.getRecipient());
-		if (chat.getHead() != null) {
+		if (chat != null && chat.getHead() != null) {
 			Block head = chat.getHead();
 			if (new String(block.getPreviousHash()).equals(new String(head.hash()))) {
 				return true;
