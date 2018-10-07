@@ -14,11 +14,13 @@ import javax.swing.JPanel;
 
 import chainmail.Blockchain;
 import chainmail.Client;
+import chainmail.Contact;
 
 public class ChatWidget extends JPanel implements ActionListener {
 
 	private MainFrame mainFrame;
 	private Blockchain chat;
+	private Contact contact;
 	
 	public ChatWidget(MainFrame mainFrame, Blockchain chat) {
 		
@@ -58,13 +60,44 @@ public class ChatWidget extends JPanel implements ActionListener {
 		buttonArray.setAlignmentY(BOTTOM_ALIGNMENT);
 		buttonArray.setBackground(Color.WHITE);
 		
-		JButton viewButton = new JButton("View");
+		JButton viewButton = new JButton("View Messages");
 		viewButton.setBackground(new Color(100,200, 250));
 		viewButton.setForeground(Color.WHITE);
 		viewButton.setToolTipText("View the messages for this chat");
 		viewButton.setBorderPainted(false);
 		viewButton.addActionListener(this);
-		viewButton.setActionCommand("View");
+		viewButton.setActionCommand("View Messages");
+		viewButton.setAlignmentX(BOTTOM_ALIGNMENT);
+		buttonArray.add(viewButton);
+		this.add(buttonArray);
+	}
+	
+public ChatWidget(MainFrame mainFrame, Contact contact) {
+		
+		this.mainFrame = mainFrame;
+		this.contact = contact;
+		this.setBorder(BorderFactory.createEmptyBorder(10, 250, 10, 250));
+		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+		this.setMaximumSize(new Dimension(900, 95));
+		this.setPreferredSize(new Dimension(900, 95));
+		this.setBackground(Color.WHITE);
+		
+		JLabel chatContact = new JLabel(chat.getContact().getName());
+		chatContact.setAlignmentX(CENTER_ALIGNMENT);
+		this.add(chatContact);
+		
+		JPanel buttonArray = new JPanel();
+		buttonArray.setAlignmentX(CENTER_ALIGNMENT);
+		buttonArray.setAlignmentY(BOTTOM_ALIGNMENT);
+		buttonArray.setBackground(Color.WHITE);
+		
+		JButton viewButton = new JButton("View Contact");
+		viewButton.setBackground(new Color(100,200, 250));
+		viewButton.setForeground(Color.WHITE);
+		viewButton.setToolTipText("View this contact");
+		viewButton.setBorderPainted(false);
+		viewButton.addActionListener(this);
+		viewButton.setActionCommand("View Contact");
 		viewButton.setAlignmentX(BOTTOM_ALIGNMENT);
 		buttonArray.add(viewButton);
 		this.add(buttonArray);
@@ -82,9 +115,13 @@ public class ChatWidget extends JPanel implements ActionListener {
 		return this.getMainFrame().getClient();
 	}
 	
+	public Contact getContact() {
+		return this.contact;
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals("View")) {
+		if (e.getActionCommand().equals("View Messages")) {
 			
 		}
 	}

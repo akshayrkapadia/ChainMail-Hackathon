@@ -37,7 +37,7 @@ public class SearchPanel extends JPanel implements ActionListener, KeyListener {
 		JButton searchButton = new JButton("Search");
 		searchButton.setBackground(new Color(0,155,255));
 		searchButton.setForeground(Color.WHITE);
-		searchButton.setToolTipText("Searches your messages to find the closest match");
+		searchButton.setToolTipText("Searches your contatcs to find the closest match");
 		searchButton.setBorderPainted(false);
 		searchButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		searchButton.setAlignmentX(CENTER_ALIGNMENT);

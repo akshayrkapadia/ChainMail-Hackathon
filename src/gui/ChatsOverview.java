@@ -9,6 +9,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 import chainmail.Blockchain;
+import chainmail.Contact;
 
 
 public class ChatsOverview extends JPanel {
@@ -37,15 +38,29 @@ public class ChatsOverview extends JPanel {
 		}
 	}
 	
-	public ChatsOverview(MainFrame mainFrame, ArrayList<Blockchain> chats) {
+	public ChatsOverview(MainFrame mainFrame, ArrayList<Contact> contacts) {
 		
 		this.mainFrame = mainFrame;
 		this.setMaximumSize(new Dimension(900, 780));
-		this.setLayout(new GridLayout(chats.size(), 1));
+		this.setLayout(new GridLayout(contacts.size(), 1));
 		this.setBackground(new Color(230, 230, 230));
 		
-		for (Blockchain chat : chats) {
-			
+		for (Contact contact : contacts) {
+			Blockchain chat = this.getMainFrame().getClient().getChat(contact);
+			if (chat != null) {
+				ChatWidget chatWidget = new ChatWidget(mainFrame, chat);
+				chatWidget.setAlignmentX(CENTER_ALIGNMENT);
+				
+				JPanel widgetBorder = new JPanel();
+				widgetBorder.setBorder(BorderFactory.createEmptyBorder(2, 0, 2, 0));
+				widgetBorder.setOpaque(false);
+				widgetBorder.add(chatWidget);
+				widgetBorder.setAlignmentX(CENTER_ALIGNMENT);
+
+				this.add(widgetBorder);
+			} else {
+				
+			}
 
 		}
 	}
