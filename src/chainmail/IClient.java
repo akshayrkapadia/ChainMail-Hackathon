@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -156,21 +155,22 @@ public interface IClient extends Serializable {
 
 	
 	default Thread sendPublicKey(Contact contact, Client client) {
-		Thread sendPubKeyThread = new Thread() {
+		Thread sendPublicKeyThread = new Thread() {
 			public void run() {
 				while (true) {
 					try {
+						System.out.println("Client Started");
 						Socket socket = new Socket(contact.getIPAddress(), 9806);
 						System.out.println("Connected to " + contact.getName() + " at " + contact.getIPAddress());
 						ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
 						output.writeObject(client.getPublicKey());
-						client.createClientThread(contact, client, socket, output);
+						client.createClientThread(contact, client, socket, output).start();;
 					} catch (Exception e) {
 					}
 				}
 			}
 		};
-		return sendPubKeyThread;
+		return sendPublicKeyThread;
 	}
 	
 	
@@ -179,6 +179,7 @@ public interface IClient extends Serializable {
 			public void run() {
 				while (true) {
 					try {
+						System.out.println("Server Started");
 						ServerSocket serverSocket = new ServerSocket(9806);
 						Socket socket = serverSocket.accept();
 						System.out.println("Connected to " + contact.getName() + " at " + contact.getIPAddress());
@@ -186,7 +187,7 @@ public interface IClient extends Serializable {
 						PublicKey publicKey = (PublicKey) publicKeyInput.readObject();
 						contact.setPublicKey(publicKey);
 						System.out.println("Public key recieved");
-						client.createServerThread(contact, client, socket).run();
+						client.createServerThread(contact, client, socket).start();
 					} catch (Exception e) {
 					}
 				}

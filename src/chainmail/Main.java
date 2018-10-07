@@ -10,7 +10,7 @@ public class Main {
 		client.addContact(saumil);
 		
 		
-//		System.out.println(client.getIPAddress());
+		System.out.println(client.getIPAddress());
 		
 		client.startChat(ubuntu);
 	}
