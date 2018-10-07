@@ -199,6 +199,8 @@ public interface IClient extends Serializable {
 					PublicKey publicKey = (PublicKey) input.readObject();
 					contact.setPublicKey(publicKey);
 					System.out.println("Pub recv");
+					socket.close();
+					serverSocket.close();
 					client.createServerThread(contact, client, mainFrame).start();
 				} catch (Exception e) {
 					e.printStackTrace();
