@@ -13,6 +13,7 @@ public interface IBlock extends Serializable {
 	int getIndex();
 	Contact getRecipient();
 	void setNext(Block block);
+	void setPreviousHash(byte[] previousHash);
 	
 	default byte[] hash() {
 		try {

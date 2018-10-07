@@ -14,11 +14,6 @@ public class Block implements IBlock {
 	
 	public Block(int index, byte[] message, Contact recipient) {
 		this.index = index;
-		if (this.index == 0) {
-			this.previousHash = "".getBytes();
-		} else {
-			this.previousHash = next.hash();
-		}
 		this.message = message;
 		this.timestamp = LocalDateTime.now();
 		this.recipient = recipient;
@@ -62,6 +57,11 @@ public class Block implements IBlock {
 	@Override
 	public void setNext(Block block) {
 		this.next = block;
+	}
+
+	@Override
+	public void setPreviousHash(byte[] previousHash) {
+		this.previousHash = previousHash;
 	}
 	
 	

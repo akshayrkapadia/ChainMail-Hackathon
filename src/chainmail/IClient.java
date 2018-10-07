@@ -171,10 +171,12 @@ public interface IClient extends Serializable {
 								Block outputBlock = new Block(0, encryptedMessage, contact);
 								output.writeObject(outputBlock);
 							} catch(Exception e) {
+								e.printStackTrace();
 							}
 			
 						}
 					} catch (Exception e) {
+						e.printStackTrace();
 					}
 				}
 			}
@@ -211,12 +213,15 @@ public interface IClient extends Serializable {
 									ObjectOutputStream confirmation = new ObjectOutputStream(socket.getOutputStream());
 									confirmation.writeObject(new Block(0, client.encryptMessage("Confirmed", contact), contact));
 									System.out.println("Message received: " + decryptedMessage);
+								} else {
+									System.out.println("Failed");
 								}
 							} catch(Exception e) {
 								e.printStackTrace();
 							}
 						}
 					} catch (Exception e) {
+						e.printStackTrace();
 					}
 				}
 			}
