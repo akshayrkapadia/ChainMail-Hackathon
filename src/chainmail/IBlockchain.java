@@ -8,11 +8,7 @@ public interface IBlockchain {
 	
 	default void addBlock(Block block) {
 		block.setNext(this.getHead());
-		if (block.getIndex() == 0) {
-			block.setPreviousHash("".getBytes());
-		} else {
-			block.setPreviousHash(this.getHead().hash());
-		}
+		block.setPreviousHash(this.getHead().hash());
 		this.setHead(block);
 	}
 	
