@@ -144,9 +144,11 @@ public interface IClient extends Serializable {
 	}
 	
 	default Blockchain getChat(Contact contact) {
-		for (Blockchain chat : this.getChats()) {
-			if (chat.getContact().getName().equals(contact.getName())) {
-				return chat;
+		if (this.getChats() != null) {
+			for (Blockchain chat : this.getChats()) {
+				if (chat.getContact().getName().equals(contact.getName())) {
+					return chat;
+				}
 			}
 		}
 		return null;
@@ -174,6 +176,7 @@ public interface IClient extends Serializable {
 						ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
 						output.writeObject(client.getPublicKey());
 						System.out.println("Pub sent");
+						break;
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -197,6 +200,7 @@ public interface IClient extends Serializable {
 							Block outputBlock = new Block(0, encryptedMessage, contact, client.getChat(contact).getHead());
 							output.writeObject(outputBlock);
 							System.out.println("sent");
+							break;
 						} catch(Exception e) {
 							e.printStackTrace();
 						}
@@ -215,12 +219,15 @@ public interface IClient extends Serializable {
 			public void run() {
 				while (true) {
 					try {
+						System.out.println("Started pub serv");
 						ServerSocket serverSocket = new ServerSocket(9806);
 						Socket socket = serverSocket.accept();
+						System.out.println("Pub conn");
 						ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
 						PublicKey publicKey = (PublicKey) input.readObject();
 						contact.setPublicKey(publicKey);
 						System.out.println("Pub recv");
+						break;
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
