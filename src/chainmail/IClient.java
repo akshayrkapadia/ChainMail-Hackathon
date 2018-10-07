@@ -136,7 +136,6 @@ public interface IClient extends Serializable {
 			byte[] blockPreviousHash = block.getPreviousHash();
 			byte[] headHash = head.hash();
 			if (Arrays.equals(headHash, blockPreviousHash)) {
-				System.out.println("Yes");
 				return true;
 			}
 		}
