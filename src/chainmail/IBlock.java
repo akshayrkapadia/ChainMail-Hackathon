@@ -2,9 +2,7 @@ package chainmail;
 
 import java.io.Serializable;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 public interface IBlock extends Serializable {
 	
@@ -19,9 +17,13 @@ public interface IBlock extends Serializable {
 	default byte[] hash() {
 		try {
 			MessageDigest digest = MessageDigest.getInstance("SHA-256");
-			byte[] blockBytes = (((Integer)this.getIndex()).toString() + new String(this.getMessage()) + this.getTimestamp().toString() + this.getPreviousHash()).getBytes();
-			byte[] hashedBlock = digest.digest(blockBytes);
-			return hashedBlock;
+			if (this.getMessage() != null && this.getTimestamp() != null && this.getPreviousHash() != null) {
+				byte[] blockBytes = (((Integer)this.getIndex()).toString() + new String(this.getMessage()) + this.getTimestamp().toString() + new String(this.getPreviousHash())).getBytes();
+				byte[] hashedBlock = digest.digest(blockBytes);
+				return hashedBlock;
+			} else {
+				return null;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
