@@ -15,7 +15,7 @@ public class Block implements IBlock {
 	public Block(int index, byte[] message, Contact recipient) {
 		this.index = index;
 		if (this.index == 0) {
-			this.previousHash = this.hash();
+			this.previousHash = "".getBytes();
 		} else {
 			this.previousHash = next.hash();
 		}

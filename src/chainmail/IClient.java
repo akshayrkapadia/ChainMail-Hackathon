@@ -200,6 +200,7 @@ public interface IClient extends Serializable {
 								Block inputBlock = (Block) input.readObject();
 								String decryptedMessage = client.decryptMessage(inputBlock.getMessage());
 								if (decryptedMessage.equals("Confirmed")) {
+									System.out.println("Message Confirmed");
 									Blockchain chat = client.getChat(contact);
 									Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient(), inputBlock.getTimestamp());
 									chat.addBlock(newBlock);
