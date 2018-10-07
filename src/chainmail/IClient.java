@@ -166,7 +166,7 @@ public interface IClient extends Serializable {
 			public void run() {
 				while (true) {
 					try {
-						Socket socket = new Socket(contact.getIPAddress(), 9806);
+						Socket socket = new Socket(contact.getIPAddress(), 9807);
 						ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
 						output.writeObject(client.getPublicKey());
 						try {
@@ -217,7 +217,7 @@ public interface IClient extends Serializable {
 				while (true) {
 					try {
 						System.out.println("main Serv started");
-						ServerSocket serverSocket = new ServerSocket(9806);
+						ServerSocket serverSocket = new ServerSocket(9807);
 						Socket socket = serverSocket.accept();
 						System.out.println("Serv conn");
 						ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
