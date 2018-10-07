@@ -153,6 +153,7 @@ public interface IClient extends Serializable {
 						while (true) {
 							try {
 								Scanner scanner = new Scanner(System.in);
+								System.out.print(">");
 								byte[] encryptedMessage = client.encryptMessage(scanner.nextLine(), contact);
 								Block outputBlock = new Block(0, encryptedMessage, contact, client.getChat(contact).getHead());
 								output.writeObject(outputBlock);
@@ -176,7 +177,7 @@ public interface IClient extends Serializable {
 					try {
 						ServerSocket serverSocket = new ServerSocket(9806);
 						Socket socket = serverSocket.accept();
-						System.out.println("Connected to " + contact.getName() + " at " + contact.getIPAddress());
+						System.out.println("Connected to " + contact.getName() + "@" + contact.getIPAddress());
 						ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
 						PublicKey publicKey = (PublicKey) input.readObject();
 						contact.setPublicKey(publicKey);
@@ -191,7 +192,7 @@ public interface IClient extends Serializable {
 									Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient(), chat.getHead(), inputBlock.getTimestamp());
 									chat.addBlock(newBlock);
 								} else if (client.mineBlock(inputBlock, contact)) {
-									System.out.println("Message received: " + decryptedMessage);
+									System.out.println(">> " + decryptedMessage);
 									Blockchain chat = client.getChat(contact);
 									Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient(), chat.getHead(), inputBlock.getTimestamp());
 									chat.addBlock(newBlock);
