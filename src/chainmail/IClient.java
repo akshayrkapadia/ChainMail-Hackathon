@@ -56,10 +56,6 @@ public interface IClient extends Serializable {
 		return null;
 	}
 	
-	default Contact getMe() {
-		return new Contact(this.getName(), this.getIPAddress(), this.getPublicKey());
-	}
-	
 	default void addContact(Contact contact) {
 		if (this.findContact(contact.getName()) == null) {
 			this.getContacts().add(contact);

@@ -11,8 +11,8 @@ public interface IBlockchain {
 		this.setHead(block);
 	}
 	
-	default Block createGenesisBlock(Contact recipient) {
-		Block genesisBlock = new Block(0, null, recipient);
+	default Block createGenesisBlock() {
+		Block genesisBlock = new Block(0, null, null);
 		return genesisBlock;
 	}
 	

@@ -6,7 +6,7 @@ public class Blockchain implements IBlockchain {
 	private Contact contact;
 	
 	public Blockchain(Contact recipient) {
-		this.head = this.createGenesisBlock(recipient);
+		this.head = this.createGenesisBlock();
 		this.contact = contact;
 	}
 
