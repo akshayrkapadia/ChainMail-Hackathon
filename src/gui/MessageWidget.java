@@ -3,20 +3,16 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.time.LocalDateTime;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import chainmail.Block;
 import chainmail.Blockchain;
 import chainmail.Client;
-import chainmail.Contact;
 
 public class MessageWidget extends JPanel {
 
@@ -33,7 +29,11 @@ public class MessageWidget extends JPanel {
 		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 		this.setMaximumSize(new Dimension(900, 95));
 		this.setPreferredSize(new Dimension(900, 95));
-		this.setBackground(Color.WHITE);
+		if (!chat.getContact().getName().equals(block.getRecipient().getName())) {
+			this.setBackground(new Color(100,200, 250));
+		} else {
+			this.setBackground(Color.WHITE);
+		}
 		
 		String message;
 		if (this.getChat().length() == 1) {
@@ -52,6 +52,7 @@ public class MessageWidget extends JPanel {
 			date.setAlignmentX(CENTER_ALIGNMENT);
 			this.add(date);
 		}
+		
 	}
 	
 	public MainFrame getMainFrame() {

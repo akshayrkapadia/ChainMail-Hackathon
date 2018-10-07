@@ -38,30 +38,24 @@ public class ChatsOverview extends JPanel {
 		}
 	}
 	
-	public ChatsOverview(MainFrame mainFrame, ArrayList<Contact> contacts) {
+	public ChatsOverview(MainFrame mainFrame, ArrayList<Blockchain> chats) {
 		
 		this.mainFrame = mainFrame;
 		this.setMaximumSize(new Dimension(900, 780));
-		this.setLayout(new GridLayout(contacts.size(), 1));
+		this.setLayout(new GridLayout(chats.size(), 1));
 		this.setBackground(new Color(230, 230, 230));
 		
-		for (Contact contact : contacts) {
-			Blockchain chat = this.getMainFrame().getClient().getChat(contact);
-			if (chat != null) {
-				ChatWidget chatWidget = new ChatWidget(mainFrame, chat);
-				chatWidget.setAlignmentX(CENTER_ALIGNMENT);
-				
-				JPanel widgetBorder = new JPanel();
-				widgetBorder.setBorder(BorderFactory.createEmptyBorder(2, 0, 2, 0));
-				widgetBorder.setOpaque(false);
-				widgetBorder.add(chatWidget);
-				widgetBorder.setAlignmentX(CENTER_ALIGNMENT);
+		for (Blockchain chat : chats) {
+			ChatWidget chatWidget = new ChatWidget(mainFrame, chat);
+			chatWidget.setAlignmentX(CENTER_ALIGNMENT);
+			
+			JPanel widgetBorder = new JPanel();
+			widgetBorder.setBorder(BorderFactory.createEmptyBorder(2, 0, 2, 0));
+			widgetBorder.setOpaque(false);
+			widgetBorder.add(chatWidget);
+			widgetBorder.setAlignmentX(CENTER_ALIGNMENT);
 
-				this.add(widgetBorder);
-			} else {
-				
-			}
-
+			this.add(widgetBorder);
 		}
 	}
 	

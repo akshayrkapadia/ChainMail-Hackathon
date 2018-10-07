@@ -122,7 +122,7 @@ public ChatWidget(MainFrame mainFrame, Contact contact) {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("View Messages")) {
-			
+			this.getMainFrame().update(this.getChat());
 		}
 	}
 

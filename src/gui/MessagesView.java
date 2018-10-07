@@ -26,10 +26,6 @@ public class MessagesView extends JPanel {
 		this.setLayout(new GridLayout(chat.length(), 1));
 		this.setBackground(new Color(230, 230, 230));
 		
-		JLabel contact = new JLabel(chat.getContact().getName());
-		contact.setForeground(Color.WHITE);
-		this.add(contact);
-		
 		Block block = chat.getHead();
 		while(block.getNext() != null) {
 			

@@ -1,6 +1,8 @@
 package chainmail;
 
-public interface IBlockchain {
+import java.io.Serializable;
+
+public interface IBlockchain extends Serializable {
 	
 	Block getHead();
 	void setHead(Block block);

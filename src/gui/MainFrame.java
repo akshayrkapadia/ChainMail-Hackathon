@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.util.ArrayList;
 
@@ -20,6 +21,7 @@ public class MainFrame extends JPanel {
 	private JScrollPane chatsView;
 	private BottomPanel bottomPanel;
 	private JScrollPane messagesView;
+	private MessageWriter messageWriter;
 	
 	public MainFrame(MainWindow mainWindow) {	
 		this.client = mainWindow.getClient();
@@ -38,7 +40,7 @@ public class MainFrame extends JPanel {
 		this.chatsView = chatsView;
 		this.add(chatsView);
 		
-		BottomPanel bottomPanel = new BottomPanel(this);
+		BottomPanel bottomPanel = new BottomPanel(this, true);
 		this.bottomPanel = bottomPanel;
 		this.add(bottomPanel);
 
@@ -73,7 +75,7 @@ public class MainFrame extends JPanel {
 		this.chatsView = chatsView;
 		this.add(chatsOverview);
 		
-		BottomPanel bottomPanel = new BottomPanel(this);
+		BottomPanel bottomPanel = new BottomPanel(this, true);
 		this.bottomPanel = bottomPanel;
 		this.add(bottomPanel);
 		
@@ -82,19 +84,19 @@ public class MainFrame extends JPanel {
 		this.setVisible(true);
 	}
 	
-	public void update(ArrayList<Contact> contacts) {
+	public void update(ArrayList<Blockchain> chats) {
 		this.removeAll();
 		
 		SearchPanel searchBar = new SearchPanel(this);
 		this.searchBar = searchBar;
 		this.add(searchBar);
 		
-		ChatsOverview chatsOverview = new ChatsOverview(this, contacts);
+		ChatsOverview chatsOverview = new ChatsOverview(this, chats);
 		JScrollPane chatsView = new JScrollPane(chatsOverview);
 		this.chatsView = chatsView;
 		this.add(chatsOverview);
 		
-		BottomPanel bottomPanel = new BottomPanel(this);
+		BottomPanel bottomPanel = new BottomPanel(this, true);
 		this.bottomPanel = bottomPanel;
 		this.add(bottomPanel);
 		
@@ -106,15 +108,25 @@ public class MainFrame extends JPanel {
 	public void update(Blockchain chat) {
 		this.removeAll();
 		
+		JPanel contactPanel = new JPanel();
+		contactPanel.setPreferredSize(new Dimension(950, 30));
+		contactPanel.setMaximumSize(new Dimension(3000, 30));
+		contactPanel.setBackground(Color.DARK_GRAY);
 		JLabel contact = new JLabel(chat.getContact().getName());
-		this.add(contact);
+		contact.setForeground(Color.WHITE);
+		contactPanel.add(contact);
+		this.add(contactPanel);
 		
 		MessagesView messagesOverview = new MessagesView(this, chat);
 		JScrollPane messagesView = new JScrollPane(messagesOverview);
 		this.messagesView = messagesView;
 		this.add(messagesView);
 		
-		BottomPanel bottomPanel = new BottomPanel(this);
+		MessageWriter messageWriter = new MessageWriter(this, chat.getContact());
+		this.messageWriter = messageWriter;
+		this.add(messageWriter);
+		
+		BottomPanel bottomPanel = new BottomPanel(this, false);
 		this.bottomPanel = bottomPanel;
 		this.add(bottomPanel);
 		

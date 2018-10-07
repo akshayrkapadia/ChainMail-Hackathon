@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -13,6 +14,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
+
+import chainmail.Blockchain;
 
 public class SearchPanel extends JPanel implements ActionListener, KeyListener {
 	
@@ -37,7 +40,7 @@ public class SearchPanel extends JPanel implements ActionListener, KeyListener {
 		JButton searchButton = new JButton("Search");
 		searchButton.setBackground(new Color(0,155,255));
 		searchButton.setForeground(Color.WHITE);
-		searchButton.setToolTipText("Searches your contatcs to find the closest match");
+		searchButton.setToolTipText("Searches your chats to find the closest match");
 		searchButton.setBorderPainted(false);
 		searchButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		searchButton.setAlignmentX(CENTER_ALIGNMENT);
@@ -64,9 +67,20 @@ public class SearchPanel extends JPanel implements ActionListener, KeyListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("Search")) {
 			try {
-				
+				ArrayList<Blockchain> chats = this.getMainFrame().getClient().getChats();
+				ArrayList<Blockchain> targetChats = new ArrayList<Blockchain>();
+				for (Blockchain chat : chats) {
+					if (chat.getContact().getName().contains(this.getSearchField().getText())) {
+						targetChats.add(chat);
+					}
+				}
+				if (targetChats.size() == 0) {
+					throw new Exception();
+				} else {
+					this.getMainFrame().update(chats);
+				}
 			} catch (Exception exception) {
-				JOptionPane.showMessageDialog(null, "No messages found");
+				JOptionPane.showMessageDialog(null, "No chats found");
 			}
 		}
 	}
