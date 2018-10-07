@@ -77,22 +77,6 @@ public interface IClient extends Serializable {
 	default void addChat(Blockchain chat) {
 		this.getChats().add(chat);
 	}
-//	default void saveKeys(PrivateKey privateKey, PublicKey publicKey) {
-//		try {
-//			FileOutputStream publicKeyFile = new FileOutputStream("publicKey.ser");
-//			FileOutputStream privateKeyFile = new FileOutputStream("privateKey.ser");
-//			ObjectOutputStream publicKeyFileObject = new ObjectOutputStream(publicKeyFile);
-//			ObjectOutputStream privateKeyFileObject = new ObjectOutputStream(privateKeyFile);
-//			publicKeyFileObject.writeObject(publicKey);
-//			privateKeyFileObject.writeObject(privateKey);
-//			publicKeyFileObject.close();
-//			privateKeyFileObject.close();
-//			publicKeyFile.close();
-//			privateKeyFile.close();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	}
 	
 	default void generateKeys() {
 		try {
@@ -145,17 +129,17 @@ public interface IClient extends Serializable {
 	
 	default boolean mineBlock(Block block, Contact contact) {
 		Blockchain chat = this.getChat(contact);
-		
 		if (chat != null && chat.getHead() != null) {
 			Block head = chat.getHead();
-			if (new String(block.getPreviousHash()).equals(new String(head.hash()))) {
+			String blockPreviousHash = new String(block.getPreviousHash());
+			String headHash = new String(head.hash());
+			if (headHash.equals(blockPreviousHash)) {
+				System.out.println("Yes");
 				return true;
 			}
 		}
 		return false;
 	}
-	
-
 	
 	default Thread createClientThread(Contact contact, Client client) {
 		Thread sendPublicKeyThread = new Thread() {
@@ -169,7 +153,7 @@ public interface IClient extends Serializable {
 							try {
 								Scanner scanner = new Scanner(System.in);
 								byte[] encryptedMessage = client.encryptMessage(scanner.nextLine(), contact);
-								Block outputBlock = new Block(0, encryptedMessage, contact);
+								Block outputBlock = new Block(0, encryptedMessage, contact, client.getChat(contact).getHead());
 								output.writeObject(outputBlock);
 							} catch(Exception e) {
 							}
@@ -203,15 +187,15 @@ public interface IClient extends Serializable {
 								if (decryptedMessage.equals("Confirmed")) {
 									System.out.println("Message Confirmed");
 									Blockchain chat = client.getChat(contact);
-									Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient(), inputBlock.getTimestamp());
+									Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient(), chat.getHead(), inputBlock.getTimestamp());
 									chat.addBlock(newBlock);
 								} else if (client.mineBlock(inputBlock, contact)) {
+									System.out.println("Message received: " + decryptedMessage);
 									Blockchain chat = client.getChat(contact);
-									Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient(), inputBlock.getTimestamp());
+									Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient(), chat.getHead(), inputBlock.getTimestamp());
 									chat.addBlock(newBlock);
 									ObjectOutputStream confirmation = new ObjectOutputStream(socket.getOutputStream());
-									confirmation.writeObject(new Block(0, client.encryptMessage("Confirmed", contact), contact));
-									System.out.println("Message received: " + decryptedMessage);
+									confirmation.writeObject(new Block(0, client.encryptMessage("Confirmed", contact), contact, chat.getHead().getNext()));
 								} else {
 									System.out.println("Failed");
 								}

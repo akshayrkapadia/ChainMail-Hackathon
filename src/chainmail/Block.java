@@ -12,15 +12,26 @@ public class Block implements IBlock {
 	private Block next;
 	private Contact recipient;
 	
-	public Block(int index, byte[] message, Contact recipient) {
+	public Block(int index, byte[] message, Contact recipient, Block block) {
 		this.index = index;
 		this.message = message;
+		this.next = block;
+		this.previousHash = block.hash();
 		this.timestamp = LocalDateTime.now();
 		this.recipient = recipient;
 	}
 	
-	public Block(int index, byte[] message, Contact recipient, LocalDateTime timestamp) {
-		this(index, message, recipient);
+	public Block(int index, byte[] message, Contact recipient, Block block, LocalDateTime timestamp) {
+		this(index, message, recipient, block);
+		this.timestamp = timestamp;
+	}
+	
+	public Block(int index, byte[] message, Contact recipient, Block block, byte[] previousHash) {
+		this.index = index;
+		this.message = message;
+		this.recipient = recipient;
+		this.next = block;
+		this.previousHash = previousHash;
 		this.timestamp = timestamp;
 	}
 

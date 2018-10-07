@@ -7,13 +7,11 @@ public interface IBlockchain {
 	Contact getContact();
 	
 	default void addBlock(Block block) {
-		block.setNext(this.getHead());
-		block.setPreviousHash(this.getHead().hash());
 		this.setHead(block);
 	}
 	
 	default Block createGenesisBlock() {
-		Block genesisBlock = new Block(0, "".getBytes(), null);
+		Block genesisBlock = new Block(0, "".getBytes(), null, null, "".getBytes());
 		return genesisBlock;
 	}
 	
