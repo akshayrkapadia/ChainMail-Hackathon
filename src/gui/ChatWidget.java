@@ -122,6 +122,10 @@ public ChatWidget(MainFrame mainFrame, Contact contact) {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("View Messages")) {
+			Contact contact = this.getContact();
+			this.getMainFrame().getClient().createServerThread(contact, this.getMainFrame().getClient(), this.getMainFrame());
+			this.getMainFrame().update(this.getMainFrame().getClient().getChat(contact));
+			this.getMainFrame().getClient().save();
 			this.getMainFrame().update(this.getChat());
 		}
 	}

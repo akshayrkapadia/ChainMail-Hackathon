@@ -173,7 +173,9 @@ public interface IClient extends Serializable {
 						Socket socket = new Socket(contact.getIPAddress(), 9806);
 						ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
 						output.writeObject(client.getPublicKey());
+						System.out.println("Pub sent");
 					} catch (Exception e) {
+						e.printStackTrace();
 					}
 				}
 			}
@@ -194,9 +196,12 @@ public interface IClient extends Serializable {
 							byte[] encryptedMessage = client.encryptMessage(message, contact);
 							Block outputBlock = new Block(0, encryptedMessage, contact, client.getChat(contact).getHead());
 							output.writeObject(outputBlock);
+							System.out.println("sent");
 						} catch(Exception e) {
+							e.printStackTrace();
 						}
 					} catch (Exception e) {
+						e.printStackTrace();
 					}
 				}
 			}
@@ -215,7 +220,9 @@ public interface IClient extends Serializable {
 						ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
 						PublicKey publicKey = (PublicKey) input.readObject();
 						contact.setPublicKey(publicKey);
+						System.out.println("Pub recv");
 					} catch (Exception e) {
+						e.printStackTrace();
 					}
 				}
 			}
@@ -232,6 +239,7 @@ public interface IClient extends Serializable {
 						ServerSocket serverSocket = new ServerSocket(9806);
 						Socket socket = serverSocket.accept();
 						ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
+						System.out.println("Serv conn");
 						while (true) {
 							try {
 								Block inputBlock = (Block) input.readObject();
@@ -253,9 +261,11 @@ public interface IClient extends Serializable {
 									mainFrame.update(client.getChat(contact));
 								}
 							} catch(Exception e) {
+								e.printStackTrace();
 							}
 						}
 					} catch (Exception e) {
+						e.printStackTrace();
 					}
 				}
 			}
