@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -17,6 +18,7 @@ import java.security.PublicKey;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 import javax.crypto.Cipher;
@@ -131,9 +133,9 @@ public interface IClient extends Serializable {
 		Blockchain chat = this.getChat(contact);
 		if (chat != null && chat.getHead() != null) {
 			Block head = chat.getHead();
-			String blockPreviousHash = new String(block.getPreviousHash());
-			String headHash = new String(head.hash());
-			if (headHash.equals(blockPreviousHash)) {
+			byte[] blockPreviousHash = block.getPreviousHash();
+			byte[] headHash = head.hash();
+			if (Arrays.equals(headHash, blockPreviousHash)) {
 				System.out.println("Yes");
 				return true;
 			}
