@@ -154,7 +154,7 @@ public interface IClient extends Serializable {
 	
 
 	
-	default Thread sendPublicKey(Contact contact, Client client) {
+	default Thread clientThread(Contact contact, Client client) {
 		Thread sendPublicKeyThread = new Thread() {
 			public void run() {
 				while (true) {
@@ -162,10 +162,16 @@ public interface IClient extends Serializable {
 						Socket socket = new Socket(contact.getIPAddress(), 9806);
 						ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
 						output.writeObject(client.getPublicKey());
-						Thread clientThread = client.createClientThread(contact, client, output);
-						clientThread.start();
-						clientThread.join();
-						break;
+						while (true) {
+							try {
+								Scanner scanner = new Scanner(System.in);
+								byte[] encryptedMessage = client.encryptMessage(scanner.nextLine(), contact);
+								Block outputBlock = new Block(0, encryptedMessage, contact);
+								output.writeObject(outputBlock);
+							} catch(Exception e) {
+							}
+			
+						}
 					} catch (Exception e) {
 					}
 				}
@@ -175,7 +181,7 @@ public interface IClient extends Serializable {
 	}
 	
 	
-	default Thread recievePublicKey(Contact contact, Client client) {
+	default Thread serverThread(Contact contact, Client client) {
 		Thread recievePublicKeyThread = new Thread() {
 			public void run() {
 				while (true) {
@@ -187,62 +193,31 @@ public interface IClient extends Serializable {
 						PublicKey publicKey = (PublicKey) input.readObject();
 						contact.setPublicKey(publicKey);
 						System.out.println("Public key recieved");
-						Thread serverThread = client.createServerThread(contact, client, socket);
-						serverThread.start();
-						serverThread.join();
-						break;
+						while (true) {
+							try {
+								Block inputBlock = (Block) input.readObject();
+								String decryptedMessage = client.decryptMessage(inputBlock.getMessage());
+								if (decryptedMessage.equals("Confirmed")) {
+									Blockchain chat = client.getChat(contact);
+									Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient(), inputBlock.getTimestamp());
+									chat.addBlock(newBlock);
+								} else if (client.mineBlock(inputBlock)) {
+									Blockchain chat = client.getChat(contact);
+									Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient(), inputBlock.getTimestamp());
+									chat.addBlock(newBlock);
+									ObjectOutputStream confirmation = new ObjectOutputStream(socket.getOutputStream());
+									confirmation.writeObject(new Block(0, client.encryptMessage("Confirmed", contact), contact));
+								}
+								System.out.println("Message received: " + decryptedMessage);
+							} catch(Exception e) {
+								e.printStackTrace();
+							}
+						}
 					} catch (Exception e) {
 					}
 				}
 			}
 		};
 		return recievePublicKeyThread;
-	}
-	
-	default Thread createClientThread(Contact contact, Client client, ObjectOutputStream output) {
-		Thread clientThread = new Thread() {
-			public void run() {
-				while (true) {
-					try {
-						Scanner scanner = new Scanner(System.in);
-						byte[] encryptedMessage = client.encryptMessage(scanner.nextLine(), contact);
-						Block outputBlock = new Block(0, encryptedMessage, contact);
-						output.writeObject(outputBlock);
-					} catch(Exception e) {
-					}
-	
-				}
-			}
-		};
-		return clientThread;
-	}
-	
-	default Thread createServerThread(Contact contact, Client client, Socket socket) {
-		Thread serverThread = new Thread() {
-			public void run() {
-				while (true) {
-					try {
-						ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
-						Block inputBlock = (Block) input.readObject();
-						String decryptedMessage = client.decryptMessage(inputBlock.getMessage());
-						if (decryptedMessage.equals("Confirmed")) {
-							Blockchain chat = client.getChat(contact);
-							Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient(), inputBlock.getTimestamp());
-							chat.addBlock(newBlock);
-						} else if (client.mineBlock(inputBlock)) {
-							Blockchain chat = client.getChat(contact);
-							Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient(), inputBlock.getTimestamp());
-							chat.addBlock(newBlock);
-							ObjectOutputStream confirmation = new ObjectOutputStream(socket.getOutputStream());
-							confirmation.writeObject(new Block(0, client.encryptMessage("Confirmed", contact), contact));
-						}
-						System.out.println("Message received: " + decryptedMessage);
-					} catch(Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		};
-		return serverThread;
 	}
 }
