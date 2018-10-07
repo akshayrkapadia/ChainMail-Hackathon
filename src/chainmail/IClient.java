@@ -153,7 +153,6 @@ public interface IClient extends Serializable {
 						while (true) {
 							try {
 								Scanner scanner = new Scanner(System.in);
-								System.out.print(">");
 								byte[] encryptedMessage = client.encryptMessage(scanner.nextLine(), contact);
 								Block outputBlock = new Block(0, encryptedMessage, contact, client.getChat(contact).getHead());
 								output.writeObject(outputBlock);
@@ -192,14 +191,12 @@ public interface IClient extends Serializable {
 									Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient(), chat.getHead(), inputBlock.getTimestamp());
 									chat.addBlock(newBlock);
 								} else if (client.mineBlock(inputBlock, contact)) {
-									System.out.println(">> " + decryptedMessage);
+									System.out.println("> " + decryptedMessage);
 									Blockchain chat = client.getChat(contact);
 									Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient(), chat.getHead(), inputBlock.getTimestamp());
 									chat.addBlock(newBlock);
 									ObjectOutputStream confirmation = new ObjectOutputStream(socket.getOutputStream());
 									confirmation.writeObject(new Block(0, client.encryptMessage("Confirmed", contact), contact, chat.getHead().getNext()));
-								} else {
-									System.out.println("Failed");
 								}
 							} catch(Exception e) {
 							}
