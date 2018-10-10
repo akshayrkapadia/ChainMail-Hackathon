@@ -5,9 +5,9 @@ public class Blockchain implements IBlockchain {
 	private Block head;
 	private Contact contact;
 	
-	public Blockchain(Contact recipient) {
+	public Blockchain(Contact contact) {
 		this.head = this.createGenesisBlock();
-		this.contact = recipient;
+		this.contact = contact;
 	}
 
 	@Override

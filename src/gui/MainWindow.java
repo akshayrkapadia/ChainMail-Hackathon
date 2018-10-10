@@ -13,8 +13,8 @@ public class MainWindow extends JFrame {
 	
 	public MainWindow(Client client) {
 		this.client = client;
-		this.setPreferredSize(new Dimension(950,850));
-		this.setMaximumSize(new Dimension(950,850));
+		this.setPreferredSize(new Dimension(1300,850));
+		this.setMaximumSize(new Dimension(1300,850));
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setTitle("ChainMail");

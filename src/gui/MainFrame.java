@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.util.ArrayList;
@@ -22,27 +23,31 @@ public class MainFrame extends JPanel {
 	private BottomPanel bottomPanel;
 	private JScrollPane messagesView;
 	private MessageWriter messageWriter;
+	private ContactsPanel contactsPanel;
 	
 	public MainFrame(MainWindow mainWindow) {	
 		this.client = mainWindow.getClient();
 		this.mainWindow = mainWindow;
-		this.setMaximumSize(new Dimension(900, 850));
-		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+		this.setMaximumSize(new Dimension(1300, 850));
+		this.setLayout(new BorderLayout());
 
 		SearchPanel searchBar = new SearchPanel(this);
 		this.searchBar = searchBar;
-		this.add(searchBar);
+		this.add(searchBar, BorderLayout.PAGE_START);
 		
+		ContactsPanel contactsPanel = new ContactsPanel(this);
+		this.contactsPanel = contactsPanel;
+		this.add(contactsPanel, BorderLayout.LINE_START);
 	
 		ChatsOverview chatsOverview = new ChatsOverview(this);
 		JScrollPane chatsView = new JScrollPane(chatsOverview);
 		chatsOverview.setPreferredSize(new Dimension(900, 700));
 		this.chatsView = chatsView;
-		this.add(chatsView);
+		this.add(chatsView, BorderLayout.CENTER);
 		
 		BottomPanel bottomPanel = new BottomPanel(this, true);
 		this.bottomPanel = bottomPanel;
-		this.add(bottomPanel);
+		this.add(bottomPanel, BorderLayout.PAGE_END);
 
 	}
 	
@@ -68,16 +73,20 @@ public class MainFrame extends JPanel {
 		
 		SearchPanel searchBar = new SearchPanel(this);
 		this.searchBar = searchBar;
-		this.add(searchBar);
+		this.add(searchBar, BorderLayout.PAGE_START);
+		
+		ContactsPanel contactsPanel = new ContactsPanel(this);
+		this.contactsPanel = contactsPanel;
+		this.add(contactsPanel, BorderLayout.LINE_START);
 		
 		ChatsOverview chatsOverview = new ChatsOverview(this);
 		JScrollPane chatsView = new JScrollPane(chatsOverview);
 		this.chatsView = chatsView;
-		this.add(chatsOverview);
+		this.add(chatsOverview, BorderLayout.CENTER);
 		
 		BottomPanel bottomPanel = new BottomPanel(this, true);
 		this.bottomPanel = bottomPanel;
-		this.add(bottomPanel);
+		this.add(bottomPanel, BorderLayout.PAGE_END);
 		
 		this.repaint();
 		this.revalidate();

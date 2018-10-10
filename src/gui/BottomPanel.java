@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -69,6 +70,14 @@ private MainFrame mainFrame;
 	public MainFrame getMainFrame() {
 		return this.mainFrame;
 	}
+	
+	private static final Pattern PATTERN = Pattern.compile(
+	        "^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
+
+	public static boolean validate(final String ip) {
+	    return PATTERN.matcher(ip).matches();
+	}
+	
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -81,8 +90,25 @@ private MainFrame mainFrame;
 				String name = JOptionPane.showInputDialog("Name");
 				if (name == null) {
 					break;
+				} else if (name.length() == 0) {
+					JOptionPane.showMessageDialog(null, "Must enter contact name", "Error", JOptionPane.WARNING_MESSAGE);	
+					continue;
+				} else if (this.getMainFrame().getClient().findContact(name) != null) {
+					JOptionPane.showMessageDialog(null, "Contact already exists", "Error", JOptionPane.WARNING_MESSAGE);	
+					continue;
 				}
-				String ipAddress = JOptionPane.showInputDialog("IP Address");
+				String ipAddress;
+				while (true) {
+					ipAddress = JOptionPane.showInputDialog("IP Address");
+					if (ipAddress == null) {
+						break;
+					} else if (!validate(ipAddress)) {
+						JOptionPane.showMessageDialog(null, "Invalid IP Address", "Error", JOptionPane.WARNING_MESSAGE);	
+						continue;
+					} else {
+						break;
+					}
+				}
 				if (ipAddress == null) {
 					break;
 				}

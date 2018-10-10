@@ -16,9 +16,9 @@ public class Block implements IBlock {
 		this.index = index;
 		this.message = message;
 		this.next = block;
-		this.previousHash = block.hash();
-		this.timestamp = LocalDateTime.now();
 		this.recipient = recipient;
+		this.timestamp = LocalDateTime.now();
+		this.previousHash = block.hash();
 	}
 	
 	public Block(int index, byte[] message, Contact recipient, Block block, LocalDateTime timestamp) {
@@ -31,8 +31,8 @@ public class Block implements IBlock {
 		this.message = message;
 		this.recipient = recipient;
 		this.next = block;
+		this.timestamp = LocalDateTime.now();
 		this.previousHash = previousHash;
-		this.timestamp = timestamp;
 	}
 
 	@Override
