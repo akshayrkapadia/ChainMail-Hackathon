@@ -74,7 +74,8 @@ public class MessageWriter extends JPanel implements ActionListener, KeyListener
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("Send")) {
-			this.getMainFrame().getClient().createClientThread(this.getContact(), this.getMainFrame().getClient(), this.getTextField().getText()).start();		
+			this.getMainFrame().getClient().setWriteNew(true);
+			this.getMainFrame().getClient().setNewMessage(this.getTextField().getText());
 			this.getMainFrame().getClient().save();
 			this.getMainFrame().update(this.getMainFrame().getClient().getChat(this.getContact()));
 		}

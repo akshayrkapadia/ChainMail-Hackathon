@@ -72,8 +72,6 @@ public class ContactWidget extends JPanel implements ActionListener {
 		if (e.getActionCommand().equals("Start Chat")) {
 			Contact contact = this.getContact();
 			this.getMainFrame().getClient().startChat(contact);
-			this.getMainFrame().getClient().recievePublicKey(contact, this.getMainFrame().getClient(), this.getMainFrame()).start();
-			this.getMainFrame().getClient().sendPublicKey(contact, this.getMainFrame().getClient()).start();
 			this.getMainFrame().update(this.getMainFrame().getClient().getChat(contact));
 			this.getMainFrame().getClient().save();
 		}

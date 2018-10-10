@@ -18,8 +18,12 @@ public class Client implements IClient {
 	private String ipAddress;
 	private PublicKey publicKey;
 	private PrivateKey privateKey;
+	private boolean writeNew;
+	private String newMessage;
 	
 	public Client() {
+		this.writeNew = false;
+		this.newMessage = null;
 		try {
 			FileInputStream file = new FileInputStream("ChainMail.ser");
 			ObjectInputStream object = new ObjectInputStream(file);
@@ -99,5 +103,28 @@ public class Client implements IClient {
 		this.createClientThread(contact, this).start();		
 	}
 
+	@Override
+	public boolean getWriteNew() {
+		return this.getWriteNew();
+	}
+
+	@Override
+	public String getNewMessage() {
+		// TODO Auto-generated method stub
+		return this.newMessage;
+	}
+
+	@Override
+	public void setNewMessage(String message) {
+		// TODO Auto-generated method stub
+		this.newMessage = message;
+		
+	}
+
+	@Override
+	public void setWriteNew(boolean writeNew) {
+		// TODO Auto-generated method stub
+		this.writeNew = writeNew;
+	}
 
 }

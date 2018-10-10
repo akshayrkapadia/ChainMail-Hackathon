@@ -29,9 +29,13 @@ public interface IClient extends Serializable {
 	String getIPAddress();
 	PublicKey getPublicKey();
 	PrivateKey getPrivateKey();
+	boolean getWriteNew();
+	String getNewMessage();
 	void setKeys(PrivateKey privateKey, PublicKey publicKey);
 	void setName(String name);
 	void startChat(Contact contact);
+	void setNewMessage(String message);
+	void setWriteNew(boolean writeNew);
 	
 	default String findIPAddress() {
 		try {
@@ -136,7 +140,7 @@ public interface IClient extends Serializable {
 		return false;
 	}
 	
-	default Thread createClientThread(Contact contact, Client client, String message) {
+	default Thread createClientThread(Contact contact, Client client) {
 		Thread sendPublicKeyThread = new Thread() {
 			public void run() {
 				while (true) {
@@ -145,11 +149,13 @@ public interface IClient extends Serializable {
 						ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
 						output.writeObject(client.getPublicKey());
 						while (true) {
-							try {
-								byte[] encryptedMessage = client.encryptMessage(message, contact);
-								Block outputBlock = new Block(0, encryptedMessage, contact, client.getChat(contact).getHead());
-								output.writeObject(outputBlock);
-							} catch(Exception e) {
+							if (client.getWriteNew()) {
+								try {
+									byte[] encryptedMessage = client.encryptMessage(client.getNewMessage(), contact);
+									Block outputBlock = new Block(0, encryptedMessage, contact, client.getChat(contact).getHead());
+									output.writeObject(outputBlock);
+								} catch(Exception e) {
+								}
 							}
 			
 						}

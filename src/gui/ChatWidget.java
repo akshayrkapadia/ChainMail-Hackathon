@@ -124,10 +124,10 @@ public ChatWidget(MainFrame mainFrame, Contact contact) {
 		if (e.getActionCommand().equals("View Messages")) {
 			Contact contact = this.getContact();
 			if (contact != null) {
-					this.getMainFrame().getClient().createServerThread(contact, this.getMainFrame().getClient(), this.getMainFrame());
-					this.getMainFrame().update(this.getMainFrame().getClient().getChat(contact));
-					this.getMainFrame().getClient().save();
-					this.getMainFrame().update(this.getChat());
+				this.getMainFrame().getClient().startChat(contact);
+				this.getMainFrame().update(this.getMainFrame().getClient().getChat(contact));
+				this.getMainFrame().getClient().save();
+				this.getMainFrame().update(this.getChat());
 			}
 		}
 	}
