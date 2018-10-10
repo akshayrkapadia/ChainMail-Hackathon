@@ -136,7 +136,7 @@ public interface IClient extends Serializable {
 		return false;
 	}
 	
-	default Thread sendPublicKey(Contact contact, Client client) {
+	default Thread createClientThread(Contact contact, Client client, String message) {
 		Thread sendPublicKeyThread = new Thread() {
 			public void run() {
 				while (true) {
@@ -144,10 +144,16 @@ public interface IClient extends Serializable {
 						Socket socket = new Socket(contact.getIPAddress(), 9806);
 						ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
 						output.writeObject(client.getPublicKey());
-						System.out.println("Pub sent");
-						break;
+						while (true) {
+							try {
+								byte[] encryptedMessage = client.encryptMessage(message, contact);
+								Block outputBlock = new Block(0, encryptedMessage, contact, client.getChat(contact).getHead());
+								output.writeObject(outputBlock);
+							} catch(Exception e) {
+							}
+			
+						}
 					} catch (Exception e) {
-						e.printStackTrace();
 					}
 				}
 			}
@@ -155,99 +161,47 @@ public interface IClient extends Serializable {
 		return sendPublicKeyThread;
 	}
 	
-	default Thread createClientThread(Contact contact, Client client, String message) {
-		Thread clientThread = new Thread() {
+	
+	default Thread createServerThread(Contact contact, Client client) {
+		Thread recievePublicKeyThread = new Thread() {
 			public void run() {
 				while (true) {
 					try {
-						Socket socket = new Socket(contact.getIPAddress(), 9807);
-						ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
-						try {
-							byte[] encryptedMessage = client.encryptMessage(message, contact);
-							Block outputBlock = new Block(0, encryptedMessage, contact, client.getChat(contact).getHead());
-							output.writeObject(outputBlock);
-							System.out.println("sent");
-							break;
-						} catch(Exception e) {
-							e.printStackTrace();
+						ServerSocket serverSocket = new ServerSocket(9806);
+						Socket socket = serverSocket.accept();
+						System.out.println("Connected to " + contact.getName() + "@" + contact.getIPAddress());
+						ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
+						PublicKey publicKey = (PublicKey) input.readObject();
+						contact.setPublicKey(publicKey);
+						System.out.println("Public key recieved");
+						while (true) {
+							try {
+								Block inputBlock = (Block) input.readObject();
+								String decryptedMessage = client.decryptMessage(inputBlock.getMessage());
+								if (decryptedMessage.equals("Confirmed")) {
+									System.out.println("Message Confirmed");
+									Blockchain chat = client.getChat(contact);
+									Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient(), chat.getHead(), inputBlock.getTimestamp());
+									chat.addBlock(newBlock);
+								} else if (client.mineBlock(inputBlock, contact)) {
+									System.out.println(">> " + decryptedMessage);
+									Blockchain chat = client.getChat(contact);
+									Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient(), chat.getHead(), inputBlock.getTimestamp());
+									chat.addBlock(newBlock);
+									ObjectOutputStream confirmation = new ObjectOutputStream(socket.getOutputStream());
+									confirmation.writeObject(new Block(0, client.encryptMessage("Confirmed", contact), contact, chat.getHead().getNext()));
+								} else {
+									System.out.println("Failed");
+								}
+							} catch(Exception e) {
+							}
 						}
 					} catch (Exception e) {
-						e.printStackTrace();
 					}
-				}
-			}
-		};
-		return clientThread;
-	}
-	
-	
-	default Thread recievePublicKey(Contact contact, Client client, MainFrame mainFrame) {
-		Thread recievePublicKeyThread = new Thread() {
-			public void run() {
-				try {
-					System.out.println("Started pub serv");
-					ServerSocket serverSocket = new ServerSocket(9806);
-					Socket socket = serverSocket.accept();
-					System.out.println("Pub conn");
-					ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
-					PublicKey publicKey = (PublicKey) input.readObject();
-					contact.setPublicKey(publicKey);
-					System.out.println("Pub recv");
-					socket.close();
-					serverSocket.close();
-					client.createServerThread(contact, client, mainFrame).start();
-				} catch (Exception e) {
-					e.printStackTrace();
 				}
 			}
 		};
 		return recievePublicKeyThread;
-	}
-	
-	
-	default Thread createServerThread(Contact contact, Client client, MainFrame mainFrame) {
-		Thread serverThread = new Thread() {
-			public void run() {
-				while (true) {
-					try {
-						System.out.println("main Serv started");
-						ServerSocket serverSocket = new ServerSocket(9807);
-						Socket socket = serverSocket.accept();
-						System.out.println("Serv conn");
-						ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
-						try {
-							Block inputBlock = (Block) input.readObject();
-							String decryptedMessage = client.decryptMessage(inputBlock.getMessage());
-							System.out.println(decryptedMessage);
-							if (decryptedMessage.equals("Confirmed")) {
-								System.out.println("Message Confirmed");
-								Blockchain chat = client.getChat(contact);
-								Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient(), chat.getHead(), inputBlock.getTimestamp());
-								chat.addBlock(newBlock);
-								client.save();
-							} else if (client.mineBlock(inputBlock, contact)) {
-								System.out.println("> " + decryptedMessage);
-								Blockchain chat = client.getChat(contact);
-								Block newBlock = new Block(chat.length(), client.encryptMessage(decryptedMessage, contact), inputBlock.getRecipient(), chat.getHead(), inputBlock.getTimestamp());
-								chat.addBlock(newBlock);
-								while (true) {
-									ObjectOutputStream confirmation = new ObjectOutputStream(socket.getOutputStream());
-									confirmation.writeObject(new Block(0, client.encryptMessage("Confirmed", contact), contact, chat.getHead().getNext()));
-									break;
-								}
-								client.save();
-								mainFrame.update(client.getChat(contact));
-							}
-						} catch(Exception e) {
-							e.printStackTrace();
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		};
-		return serverThread;
 	}
 
 }

@@ -94,7 +94,10 @@ public class Client implements IClient {
 	public  void startChat(Contact contact) {
 		if (this.getChat(contact) == null) {
 			this.addChat(new Blockchain(contact));
-		}	
+		}
+		this.createServerThread(contact, this).start();
+		this.createClientThread(contact, this).start();		
 	}
+
 
 }
