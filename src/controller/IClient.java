@@ -89,7 +89,6 @@ public interface IClient extends Serializable {
                         PublicKey publicKey = (PublicKey) input.readObject();
                         contact.setPublicKey(publicKey);
                         System.out.println("Public key recieved");
-                        System.out.println(contact.getPublicKey());
                         client.setConnected(true);
                         while (true) {
                             try {
@@ -121,6 +120,7 @@ public interface IClient extends Serializable {
                             	if (!(client.getNewMessage().equals(""))) {
                                     byte[] encryptedMessage = client.encryptMessage(client.getNewMessage(), contact);
                                     output.writeObject(encryptedMessage);
+                                    client.setNewMessage("");
                             	}
                             } catch (Exception e) {
                             }
