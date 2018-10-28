@@ -1,119 +1,92 @@
 package controller;
 
-import model.Block;
-import model.BlockChain;
-import model.Contact;
-
-import javax.swing.*;
-import java.io.FileInputStream;
-import java.io.ObjectInputStream;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.util.ArrayList;
+
+import model.Contact;
 
 public class Client implements IClient {
+	
+	private String name;
+	private String ipAddress;
+	private PublicKey publicKey;
+	private PrivateKey privateKey;
+	private String newMessage;
+	private boolean connected;
+	
+	public Client(String name) {
+		this.name = name;
+		this.ipAddress = this.findIPAddress();
+		this.newMessage = "";
+		this.connected = false;
+		this.generateKeys();
+	}
 
-    private String name;
-    private ArrayList<Contact> contacts;
-    private ArrayList<BlockChain> chats;
-    private String ipAddr;
-    private PublicKey publicKey;
-    private PrivateKey privateKey;
-    private Status status;
-    private String newMessage;
-    private Contact me;
+	@Override
+	public PrivateKey getPrivateKey() {
+		// TODO Auto-generated method stub
+		return this.privateKey;
+	}
 
-    public Client() {
-        try {
-            FileInputStream file = new FileInputStream("ChainMail.ser");
-            ObjectInputStream object = new ObjectInputStream(file);
-            Client client = (Client) object.readObject();
-            object.close();
-            file.close();
-            this.name = client.getName();
-            this.contacts = client.getContacts();
-            this.chats = client.getChats();
-            this.ipAddr = client.getIPAddr();
-            this.publicKey = client.getPublicKey();
-            this.privateKey = client.getPrivateKey();
-            this.me = client.me;
-        } catch (Exception e) {
-            while (true) {
-                String name = JOptionPane.showInputDialog("Name");
-                this.name = name;
-                break;
-            }
-            this.contacts = new ArrayList<Contact>();
-            this.chats = new ArrayList<BlockChain>();
-            this.ipAddr = this.findIPAddr();
-            this.generateKeys();
-            this.me = new Contact(this.name, this.ipAddr);
-            this.me.setPublicKey(this.getPublicKey());
-            this.save();
-        }
-        this.status = Status.IDLE;
-        this.newMessage = "";
-    }
+	@Override
+	public PublicKey getPublicKey() {
+		// TODO Auto-generated method stub
+		return this.publicKey;
+	}
 
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return this.name;
+	}
 
-    @Override
-    public String getName() {
-        return this.name;
-    }
+	@Override
+	public String getIPAddress() {
+		// TODO Auto-generated method stub
+		return this.ipAddress;
+	}
 
-    @Override
-    public String getIPAddr() {
-        return this.ipAddr;
-    }
+	@Override
+	public void setKeys(PublicKey publicKey, PrivateKey privateKey) {
+		// TODO Auto-generated method stub
+		this.publicKey = publicKey;
+		this.privateKey = privateKey;
+	}
 
-    @Override
-    public ArrayList<Contact> getContacts() {
-        return this.contacts;
-    }
+	@Override
+	public void startChat(Contact contact) {
+		this.createThreadServer(contact, this).start();
+		this.createClientThread(contact, this).start();	
+		while (true) {
+			if (this.connected) {
+				this.createMessageWriterThread(this);
+			} else {
+				break;
+			}
+		}
+	}
 
-    @Override
-    public ArrayList<BlockChain> getChats() {
-        return this.chats;
-    }
+	@Override
+	public String getNewMessage() {
+		// TODO Auto-generated method stub
+		return this.newMessage;
+	}
 
-    @Override
-    public PublicKey getPublicKey() {
-        return this.publicKey;
-    }
+	@Override
+	public void setNewMessage(String message) {
+		// TODO Auto-generated method stub
+		this.newMessage = message;
+	}
 
-    @Override
-    public PrivateKey getPrivateKey() {
-        return this.privateKey;
-    }
+	@Override
+	public boolean getConnected() {
+		// TODO Auto-generated method stub
+		return this.connected;
+	}
 
-    @Override
-    public Contact getMe() {
-        return null;
-    }
-
-    @Override
-    public Status getStatus() {
-        return this.status;
-    }
-
-    @Override
-    public String getNewMessage() {
-        return this.newMessage;
-    }
-
-    @Override
-    public void setNewMessage(String newMessage) {
-        this.newMessage = newMessage;
-    }
-
-    @Override
-    public void setStatus(Status newStatus) {
-        this.status = newStatus;
-    }
-
-    @Override
-    public void setKeys(PrivateKey privateKey, PublicKey publicKey) {
-        this.privateKey = privateKey;
-        this.publicKey = publicKey;
-    }
+	@Override
+	public void setConnected(boolean connected) {
+		// TODO Auto-generated method stub
+		this.connected = connected;
+	}
 }

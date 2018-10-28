@@ -3,35 +3,38 @@ package model;
 import java.security.PublicKey;
 
 public class Contact implements IContact {
+	
+	private String name;
+	private String ipAddress;
+	private PublicKey publicKey;
+	
+	public Contact(String name, String ipAddress) {
+		this.name = name;
+		this.ipAddress = ipAddress;
+	}
 
-    private String name;
-    private String ipAddr;
-    private PublicKey publicKey;
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return this.name;
+	}
 
-    public Contact(String name, String ipAddr) {
-        this.name = name;
-        this.ipAddr = ipAddr;
-    }
+	@Override
+	public String getIPAddress() {
+		// TODO Auto-generated method stub
+		return this.ipAddress;
+	}
 
+	@Override
+	public PublicKey getPublicKey() {
+		// TODO Auto-generated method stub
+		return this.publicKey;
+	}
 
-    @Override
-    public String getName() {
-        return this.name;
-    }
-
-    @Override
-    public String getIPAddr() {
-        return this.ipAddr;
-    }
-
-    @Override
-    public PublicKey getPublicKey() {
-        return this.publicKey;
-    }
-
-    @Override
-    public void setPublicKey(PublicKey newPublicKey) {
-        this.publicKey = newPublicKey;
-    }
+	@Override
+	public void setPublicKey(PublicKey publicKey) {
+		// TODO Auto-generated method stub
+		this.publicKey = publicKey;
+	}
 
 }

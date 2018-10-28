@@ -1,17 +1,24 @@
 package controller;
 
-import model.BlockChain;
+import java.util.Scanner;
+
 import model.Contact;
 
 public class Main {
-    public static void main(String[] args) {
-        Client client = new Client();
-        Contact contact = new Contact("Ubuntu", "152.23.60.170");
-        BlockChain chat = new BlockChain(contact);
-        client.addContact(contact);
-        client.addChat(chat);
-        client.createServerThread(contact, client, chat).start();;
-        client.createClientThread(contact, client, chat).start();
+	
+	public static void main(String[] args) {
+		Scanner in = new Scanner(System.in);
+		System.out.println("Your name: ");
+		String name = in.next();
+		System.out.println("Contact name: ");
+		String contactName = in.next();
+		System.out.println("Contact IP Address: ");
+		String contactIP = in.next();
+		in.close();
+		Client client = new Client(name);
+		Contact contact = new Contact(contactName, contactIP);
+		client.startChat(contact);
+		
+	}
 
-    }
 }
