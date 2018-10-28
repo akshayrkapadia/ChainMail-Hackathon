@@ -60,8 +60,6 @@ public class Client implements IClient {
 		while (true) {
 			if (this.connected) {
 				this.createMessageWriterThread(this).start();
-			} else {
-				break;
 			}
 		}
 	}
