@@ -59,7 +59,7 @@ public class Client implements IClient {
 		this.createClientThread(contact, this).start();	
 		while (true) {
 			if (this.connected) {
-				this.createMessageWriterThread(this);
+				this.createMessageWriterThread(this).start();
 			} else {
 				break;
 			}

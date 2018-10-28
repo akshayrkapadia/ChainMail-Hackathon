@@ -118,6 +118,7 @@ public interface IClient extends Serializable {
                         while (true) {
                             try {
                             	if (!(client.getNewMessage().equals(""))) {
+                            		System.out.println("Writing new message");
                                     byte[] encryptedMessage = client.encryptMessage(client.getNewMessage(), contact);
                                     output.writeObject(encryptedMessage);
                                     client.setNewMessage("");
@@ -137,6 +138,7 @@ public interface IClient extends Serializable {
 		Thread messageWriterThread = new Thread() {
 			public void run() {
 				if (client.getNewMessage().equals("")) {
+					System.out.println("Message writer started");
 					Scanner s = new Scanner(System.in);
 					String message = s.nextLine();
 					client.setNewMessage(message);
