@@ -166,7 +166,6 @@ public interface IClient extends Serializable {
                     	System.out.println("Public key sent");
                     	System.out.println("Message writer thread started");
         				Scanner s = new Scanner(System.in);
-        				this.wait(5000);
         				while (client.isConnected()) {
         					if (client.getNewMessage().equals("")) {
         						System.out.println("Write new message");
