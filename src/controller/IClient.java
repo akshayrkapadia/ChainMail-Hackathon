@@ -149,7 +149,7 @@ public interface IClient extends Serializable {
 						client.setNewMessage(message);
 					}
 				}
-				s.close();
+//				s.close();
 			}
 		};
 		return messageWriterThread;
