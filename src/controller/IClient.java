@@ -115,6 +115,7 @@ public interface IClient extends Serializable {
                         ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
                         output.writeObject(client.getPublicKey());
                     	System.out.println("Public key sent");
+                		client.createMessageWriterThread(client).start();
                         while (true) {
                             try {
                             	if (!(client.getNewMessage().equals(""))) {
@@ -137,8 +138,9 @@ public interface IClient extends Serializable {
 	default Thread createMessageWriterThread(Client client) {
 		Thread messageWriterThread = new Thread() {
 			public void run() {
+				System.out.println("Message writer thread started");
 				if (client.getNewMessage().equals("")) {
-					System.out.println("Message writer started");
+					System.out.println("Write new message");
 					Scanner s = new Scanner(System.in);
 					String message = s.nextLine();
 					client.setNewMessage(message);

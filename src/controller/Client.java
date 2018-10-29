@@ -57,11 +57,6 @@ public class Client implements IClient {
 	public void startChat(Contact contact) {
 		this.createThreadServer(contact, this).start();
 		this.createClientThread(contact, this).start();	
-		while (true) {
-			if (this.connected) {
-				this.createMessageWriterThread(this).start();
-			}
-		}
 	}
 
 	@Override
