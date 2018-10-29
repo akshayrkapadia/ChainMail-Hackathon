@@ -59,18 +59,6 @@ public class Client implements IClient {
 		this.createThreadServer(contact, this).start();
 		this.createClientThread(contact, this).start();	
 //		this.createMessageWriterThread(this).start();
-		System.out.println("Message writer thread started");
-		Scanner s = new Scanner(System.in);
-		while (true) {
-			System.out.println(this.isConnected());
-			System.out.println(this.getNewMessage());
-			System.out.println("\n");
-			if (this.isConnected() && this.getNewMessage().equals("")) {
-				System.out.println("Write new message");
-				String message = s.nextLine();
-				this.setNewMessage(message);
-			}
-		}
 	}
 
 	@Override
