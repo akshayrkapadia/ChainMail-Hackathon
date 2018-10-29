@@ -24,7 +24,7 @@ public interface IClient extends Serializable {
 	PublicKey getPublicKey();
 	PrivateKey getPrivateKey();
 	String getNewMessage();
-	boolean getConnected();
+	boolean isConnected();
 	void setConnected(boolean connected);
 	void setNewMessage(String message);
 	void setKeys(PublicKey publicKey, PrivateKey privateKey);
@@ -90,7 +90,6 @@ public interface IClient extends Serializable {
                         contact.setPublicKey(publicKey);
                         System.out.println("Public key recieved");
                         client.setConnected(true);
-                		client.createMessageWriterThread(client).start();
                         while (true) {
                             try {
                                 byte[] encryptedMessage = (byte[]) input.readObject();
@@ -139,7 +138,7 @@ public interface IClient extends Serializable {
 		Thread messageWriterThread = new Thread() {
 			public void run() {
 				System.out.println("Message writer thread started");
-				if (client.getNewMessage().equals("")) {
+				if (client.isConnected() && client.getNewMessage().equals("")) {
 					System.out.println("Write new message");
 					Scanner s = new Scanner(System.in);
 					String message = s.nextLine();
