@@ -90,7 +90,7 @@ public interface IClient extends Serializable {
                         contact.setPublicKey(publicKey);
                         System.out.println("Public key recieved");
                         client.setConnected(true);
-                        while (true) {
+                        while (client.isConnected()) {
                             try {
                                 byte[] encryptedMessage = (byte[]) input.readObject();
                                 String decryptedMessage = client.decryptMessage(encryptedMessage);
@@ -166,8 +166,8 @@ public interface IClient extends Serializable {
                     	System.out.println("Public key sent");
                     	System.out.println("Message writer thread started");
         				Scanner s = new Scanner(System.in);
-        				while (true) {
-        					if (client.isConnected() && client.getNewMessage().equals("")) {
+        				while (client.isConnected()) {
+        					if (client.getNewMessage().equals("")) {
         						System.out.println("Write new message");
         						String message = s.nextLine();
         						client.setNewMessage(message);
