@@ -166,17 +166,20 @@ public interface IClient extends Serializable {
                     	System.out.println("Public key sent");
                     	System.out.println("Message writer thread started");
         				Scanner s = new Scanner(System.in);
+        				this.wait(5000);
         				while (client.isConnected()) {
         					if (client.getNewMessage().equals("")) {
         						System.out.println("Write new message");
         						String message = s.nextLine();
         						client.setNewMessage(message);
+        						System.out.println("New message set");
         						 while (true) {
         	                            try {
         	                            	if (!(client.getNewMessage().equals(""))) {
-        	                            		System.out.println("Writing new message");
+        	                            		System.out.println("Sending new message");
         	                                    byte[] encryptedMessage = client.encryptMessage(client.getNewMessage(), contact);
         	                                    output.writeObject(encryptedMessage);
+        	                            		System.out.println("Message sent");
         	                                    client.setNewMessage("");
         	                            	}
         	                            } catch (Exception e) {
