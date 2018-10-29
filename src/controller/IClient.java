@@ -138,15 +138,18 @@ public interface IClient extends Serializable {
 		Thread messageWriterThread = new Thread() {
 			public void run() {
 				System.out.println("Message writer thread started");
+				Scanner s = new Scanner(System.in);
 				while (true) {
+					System.out.println(client.isConnected());
+					System.out.println(client.getNewMessage());
+					System.out.println("\n");
 					if (client.isConnected() && client.getNewMessage().equals("")) {
 						System.out.println("Write new message");
-						Scanner s = new Scanner(System.in);
 						String message = s.nextLine();
 						client.setNewMessage(message);
-						s.close();
 					}
 				}
+				s.close();
 			}
 		};
 		return messageWriterThread;
