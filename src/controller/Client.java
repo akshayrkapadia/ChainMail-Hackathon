@@ -1,9 +1,16 @@
 package controller;
 
+import java.io.FileInputStream; 
+import java.io.ObjectInputStream;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.swing.JOptionPane;
+
+import model.BlockChain;
 import model.Contact;
 
 public class Client implements IClient {
@@ -12,15 +19,44 @@ public class Client implements IClient {
 	private String ipAddress;
 	private PublicKey publicKey;
 	private PrivateKey privateKey;
+	private ArrayList<Contact> contacts;
+	private Map<Contact, BlockChain> chats;
 	private String newMessage;
 	private boolean connected;
+	private String messageRecieved;
+	private Contact me;
 	
-	public Client(String name) {
-		this.name = name;
-		this.ipAddress = this.findIPAddress();
-		this.newMessage = "";
+	public Client() {		
 		this.connected = false;
-		this.generateKeys();
+		this.newMessage = "";
+		this.messageRecieved = null;
+		try {
+			FileInputStream file = new FileInputStream("ChainMail.ser");
+			ObjectInputStream object = new ObjectInputStream(file);
+			Client client = (Client) object.readObject();
+			object.close();
+			file.close();
+			this.name = client.getName();
+			this.contacts = client.getContacts();
+			this.chats = client.getChats();
+			this.ipAddress = client.getIPAddress();
+			this.publicKey = client.getPublicKey();
+			this.privateKey = client.getPrivateKey();
+			this.me = client.me;
+		} catch (Exception e) {
+			while (true) {
+				String name = JOptionPane.showInputDialog("Name");
+				this.name = name;
+				break;
+			}
+			this.contacts = new ArrayList<Contact>();
+			this.chats = new HashMap<Contact, BlockChain>();
+			this.ipAddress = this.findIPAddress();
+			this.generateKeys();
+			this.me = new Contact(this.name, this.ipAddress);
+			this.me.setPublicKey(publicKey);
+			this.save();
+		}
 	}
 
 	@Override
@@ -83,5 +119,35 @@ public class Client implements IClient {
 	public void setConnected(boolean connected) {
 		// TODO Auto-generated method stub
 		this.connected = connected;
+	}
+
+	@Override
+	public ArrayList<Contact> getContacts() {
+		// TODO Auto-generated method stub
+		return this.contacts;
+	}
+
+	@Override
+	public Map<Contact, BlockChain> getChats() {
+		// TODO Auto-generated method stub
+		return this.chats;
+	}
+
+	@Override
+	public Contact getMe() {
+		// TODO Auto-generated method stub
+		return this.me;
+	}
+
+	@Override
+	public String getMessageRecieved() {
+		// TODO Auto-generated method stub
+		return this.messageRecieved;
+	}
+
+	@Override
+	public void setMessageRecieved(String message) {
+		// TODO Auto-generated method stub
+		this.messageRecieved = message;
 	}
 }
