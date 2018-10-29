@@ -55,7 +55,6 @@ public class Client implements IClient {
 
 	@Override
 	public void startChat(Contact contact) {
-		System.out.println(this.getIPAddress());
 		this.createThreadServer(contact, this).start();
 		this.createClientThread(contact, this).start();	
 		this.createMessageWriterThread(this).start();

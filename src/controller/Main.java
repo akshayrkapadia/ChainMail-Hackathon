@@ -11,6 +11,7 @@ public class Main {
 		System.out.println("Your name: ");
 		String name = in.next();
 		Client client = new Client(name);
+		System.out.println(client.getIPAddress());
 		System.out.println("Contact name: ");
 		String contactName = in.next();
 		System.out.println("Contact IP Address: ");
