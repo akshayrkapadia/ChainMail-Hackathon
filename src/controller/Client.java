@@ -2,6 +2,7 @@ package controller;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.Scanner;
 
 import model.Contact;
 
@@ -57,7 +58,19 @@ public class Client implements IClient {
 	public void startChat(Contact contact) {
 		this.createThreadServer(contact, this).start();
 		this.createClientThread(contact, this).start();	
-		this.createMessageWriterThread(this).start();
+//		this.createMessageWriterThread(this).start();
+		System.out.println("Message writer thread started");
+		Scanner s = new Scanner(System.in);
+		while (true) {
+			System.out.println(this.isConnected());
+			System.out.println(this.getNewMessage());
+			System.out.println("\n");
+			if (this.isConnected() && this.getNewMessage().equals("")) {
+				System.out.println("Write new message");
+				String message = s.nextLine();
+				this.setNewMessage(message);
+			}
+		}
 	}
 
 	@Override
