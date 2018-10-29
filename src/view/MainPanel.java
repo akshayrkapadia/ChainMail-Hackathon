@@ -2,9 +2,17 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.util.Map;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+
+import controller.Client;
+import gui.BottomPanel;
+import gui.ChatsOverview;
+import gui.SearchPanel;
+import model.BlockChain;
+import model.Contact;
 
 public class MainPanel extends JPanel {
 	
@@ -51,7 +59,7 @@ public class MainPanel extends JPanel {
 		return this.searchPanel;
 	}
 	
-	public ConatctsPanel getContactsPanel() {
+	public ContactsPanel getContactsPanel() {
 		return this.contactsPanel;
 	}
 	
@@ -61,5 +69,26 @@ public class MainPanel extends JPanel {
 	
 	public StatusPanel getStatusPanel() {
 		return this.statusPanel;
+	}
+	
+	public void updateHome(Map<Contact, BlockChain> chats) {
+		this.removeAll();
+		
+		SearchPanel searchPanel = new SearchPanel(this);
+		this.searchPanel = searchPanel;
+		this.add(searchPanel);
+		
+		ChatsOverview chatsOverview = new ChatsOverview(this, chats);
+		JScrollPane chatsView = new JScrollPane(chatsOverview);
+		this.chatsView = chatsView;
+		this.add(chatsOverview);
+		
+		StatusPanel statusPanel = new StatusPanel(this, true);
+		this.statusPanel = statusPanel;
+		this.add(statusPanel);
+		
+		this.repaint();
+		this.revalidate();
+		this.setVisible(true);
 	}
 }

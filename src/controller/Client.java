@@ -23,13 +23,13 @@ public class Client implements IClient {
 	private Map<Contact, BlockChain> chats;
 	private String newMessage;
 	private boolean connected;
-	private String messageRecieved;
+	private boolean messageRecieved;
 	private Contact me;
 	
 	public Client() {		
 		this.connected = false;
 		this.newMessage = "";
-		this.messageRecieved = null;
+		this.messageRecieved = false;
 		try {
 			FileInputStream file = new FileInputStream("ChainMail.ser");
 			ObjectInputStream object = new ObjectInputStream(file);
@@ -92,8 +92,9 @@ public class Client implements IClient {
 
 	@Override
 	public void startChat(Contact contact) {
-		this.createThreadServer(contact, this).start();
-		this.createClientThread(contact, this).start();	
+		BlockChain chat = this.getChats().get(contact);
+		this.createThreadServer(contact, this, chat).start();
+		this.createClientThread(contact, this, chat).start();	
 //		this.createMessageWriterThread(this).start();
 	}
 
@@ -140,14 +141,26 @@ public class Client implements IClient {
 	}
 
 	@Override
-	public String getMessageRecieved() {
+	public boolean getMessageRecieved() {
 		// TODO Auto-generated method stub
 		return this.messageRecieved;
 	}
 
 	@Override
-	public void setMessageRecieved(String message) {
+	public void setMessageRecieved(boolean message) {
 		// TODO Auto-generated method stub
 		this.messageRecieved = message;
+	}
+
+	@Override
+	public void setName(String name) {
+		// TODO Auto-generated method stub
+		this.name = name;
+	}
+
+	@Override
+	public void setIPAddress(String ipAddress) {
+		// TODO Auto-generated method stub
+		this.ipAddress = ipAddress;
 	}
 }

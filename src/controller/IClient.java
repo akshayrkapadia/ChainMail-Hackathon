@@ -34,13 +34,15 @@ public interface IClient extends Serializable {
 	ArrayList<Contact> getContacts();
 	Map<Contact, BlockChain> getChats();
 	Contact getMe();
-	String getMessageRecieved();
+	boolean getMessageRecieved();
 	boolean isConnected();
 	void setConnected(boolean connected);
-	void setMessageRecieved(String message);
+	void setMessageRecieved(boolean message);
 	void setNewMessage(String message);
 	void setKeys(PublicKey publicKey, PrivateKey privateKey);
 	void startChat(Contact contact);
+	void setName(String name);
+	void setIPAddress(String ipAddress);
 	
     default String findIPAddress() {
         try {
@@ -69,6 +71,8 @@ public interface IClient extends Serializable {
     default void addContact(Contact contact) {
     	if (!(this.getContacts().contains(contact))) {
         	this.getContacts().add(contact);
+        	BlockChain chat = new BlockChain(contact);
+        	this.addChat(chat);
     	}
     }
     
@@ -145,7 +149,7 @@ public interface IClient extends Serializable {
                                 if (block.equals(chat.getHead())) {
                                 	Block confirmedBlock = new Block(block.getIndex(), client.encryptMessage(decryptedMessage, client.getMe()), block.getRecipient(), block.getNext(), block.getTimestamp());
                                 } else if (client.mineBlock(block, contact)) {
-                                	client.setMessageRecieved(decryptedMessage);
+                                	client.setMessageRecieved(true);
                                 	chat.addBlock(block);
                                 	ObjectOutputStream confirmation = new ObjectOutputStream(socket.getOutputStream());
 									confirmation.writeObject(new Block(block.getIndex(), client.encryptMessage(decryptedMessage, contact), contact, block.getNext()));

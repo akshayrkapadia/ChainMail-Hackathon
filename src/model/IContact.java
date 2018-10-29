@@ -9,5 +9,7 @@ public interface IContact extends Serializable {
 	String getIPAddress();
 	PublicKey getPublicKey();
 	void setPublicKey(PublicKey publicKey);
+	void setName(String name);
+	void setIPAddress(String ipAddress);
 
 }

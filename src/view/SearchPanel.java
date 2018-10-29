@@ -7,6 +7,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -16,6 +18,7 @@ import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
 
 import model.BlockChain;
+import model.Contact;
 
 public class SearchPanel extends JPanel implements ActionListener, KeyListener {
 	
@@ -67,17 +70,17 @@ public class SearchPanel extends JPanel implements ActionListener, KeyListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("Search")) {
 			try {
-				ArrayList<BlockChain> chats = this.getMainPanel().getClient().getChats();
-				ArrayList<BlockChain> targetChats = new ArrayList<BlockChain>();
-				for (BlockChain chat : chats) {
-					if (chat.getContact().getName().contains(this.getSearchField().getText())) {
-						targetChats.add(chat);
+				Map<Contact, BlockChain> chats = this.getMainPanel().getClient().getChats();
+				Map<Contact, BlockChain> targetChats = new HashMap<Contact, BlockChain>();
+				for (Map.Entry<Contact, BlockChain> entry : chats.entrySet()) {
+					if (entry.getKey().getName().contains(this.getSearchField().getText())) {
+						targetChats.put(entry.getKey(), entry.getValue());
 					}
 				}
 				if (targetChats.size() == 0) {
 					throw new Exception();
 				} else {
-					this.getMainPanel().update(chats);
+					this.getMainPanel().updateHome(chats);
 				}
 			} catch (Exception exception) {
 				JOptionPane.showMessageDialog(null, "No chats found");
