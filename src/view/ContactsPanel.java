@@ -22,31 +22,29 @@ public class ContactsPanel extends JPanel {
 		this.setPreferredSize(new Dimension(350, 780));
 		this.setMaximumSize(new Dimension(350, 780));
 		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-		this.setBackground(Color.DARK_GRAY);
+		this.setBackground(Color.WHITE);
 		
 		JLabel contactLabel = new JLabel("Contacts");
+		contactLabel.setForeground(Color.BLACK);
 		contactLabel.setAlignmentX(CENTER_ALIGNMENT);
 		this.add(contactLabel);
 				
-		JScrollPane contactsScrollPane = new JScrollPane();
-
 		for (Contact contact : this.getContacts()) {
 			ContactWidget contactWidget = new ContactWidget(mainPanel, contact);
 			JPanel contactBorder = new JPanel();
 			contactBorder.setBorder(BorderFactory.createEmptyBorder(10, 140, 10, 140));
 			contactBorder.add(contactWidget);
-			contactsScrollPane.add(contactBorder);
+			this.add(contactBorder);
 		}
 		
-		this.add(contactsScrollPane);
 		
 	}
 	
-	public MainPanel getmainPanel() {
+	public MainPanel getMainPanel() {
 		return this.mainPanel;
 	}
 	
 	public ArrayList<Contact> getContacts() {
-		return this.getmainPanel().getClient().getContacts();
+		return this.getMainPanel().getClient().getContacts();
 	}
 }

@@ -79,7 +79,16 @@ public interface IClient extends Serializable {
     default void addChat(BlockChain chat) {
     	this.getChats().put(chat.getContact(), chat);
     }
-    
+
+    default Contact findContact(String name) {
+    	Contact target = null;
+    	for (Contact contact : this.getContacts()) {
+    		if (contact.getName().equals(name)) {
+    			target = contact;
+    		}
+    	}
+    	return target;
+    }
     default byte[] encryptMessage(String message, Contact contact) {
         try {
             byte[] messageBytes = message.getBytes();

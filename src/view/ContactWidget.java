@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -36,6 +37,10 @@ public class ContactWidget extends JPanel implements ActionListener {
 		ipLabel.setAlignmentX(CENTER_ALIGNMENT);
 		this.add(ipLabel);
 		
+		JPanel buttonArray = new JPanel();
+		buttonArray.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+		buttonArray.setBackground(Color.WHITE);
+		
 		JButton editButton = new JButton("Edit");
 		editButton.setBackground(new Color(100,200, 250));
 		editButton.setForeground(Color.WHITE);
@@ -43,8 +48,23 @@ public class ContactWidget extends JPanel implements ActionListener {
 		editButton.setBorderPainted(false);
 		editButton.addActionListener(this);
 		editButton.setActionCommand("Edit");
-		editButton.setAlignmentX(BOTTOM_ALIGNMENT);
-		this.add(editButton);
+		editButton.setAlignmentX(CENTER_ALIGNMENT);
+		editButton.setAlignmentY(BOTTOM_ALIGNMENT);
+		buttonArray.add(editButton);
+		
+		JButton chatButton = new JButton("Chat");
+		chatButton.setBackground(new Color(100,200, 250));
+		chatButton.setForeground(Color.WHITE);
+		chatButton.setToolTipText("Starts a chat with the contact");
+		chatButton.setBorderPainted(false);
+		chatButton.addActionListener(this);
+		chatButton.setActionCommand("Chat");
+		chatButton.setAlignmentX(CENTER_ALIGNMENT);
+		chatButton.setAlignmentY(BOTTOM_ALIGNMENT);
+		buttonArray.add(chatButton);
+		
+		
+		this.add(buttonArray);
 	}
 	
 	public MainPanel getMainPanel() {
@@ -68,14 +88,30 @@ public class ContactWidget extends JPanel implements ActionListener {
 			if (editField.equals("Name")) {
 				while (true) {
 					String name = JOptionPane.showInputDialog("Name");
-					contact.setName(name);
+					if (name == null) {
+						break;
+					} else {
+						contact.setName(name);
+						break;
+					}
 				}
 			} else if (editField.equals("IP Address")) {
-				String ipAddress = JOptionPane.showInputDialog("IP Address");
-				contact.setName(ipAddress);
+				while (true) {
+					String ipAddress = JOptionPane.showInputDialog("IP Address");
+					if (ipAddress == null) {
+						break;
+					} else {
+						contact.setName(ipAddress);
+						break;
+					}
+				}
 			}
 			this.getMainPanel().getClient().save();
 			this.getMainPanel().updateHome();
+		} else if (e.getActionCommand().equals("Chat")) {
+			this.getMainPanel().getClient().startChat(contact);
+			this.getMainPanel().updateMessages(this.getMainPanel().getClient().getChats().get(contact));
+			this.getMainPanel().getClient().save();
 		}
 	}
 

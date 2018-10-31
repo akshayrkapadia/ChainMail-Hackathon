@@ -1,16 +1,15 @@
 package view;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.util.Map;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import controller.Client;
-import gui.BottomPanel;
-import gui.ChatsOverview;
-import gui.SearchPanel;
 import model.BlockChain;
 import model.Contact;
 
@@ -18,9 +17,11 @@ public class MainPanel extends JPanel {
 	
 	private MainFrame mainFrame;
 	private SearchPanel searchPanel;
-	private ContactsPanel contactsPanel;
+	private JScrollPane contactsPanel;
 	private ChatsPanel chatsPanel;
 	private StatusPanel statusPanel;
+	private JScrollPane chatsView;
+	private JScrollPane messagesPanel;
 	
 	public MainPanel(MainFrame mainFrame) {
 		this.mainFrame = mainFrame;
@@ -32,10 +33,11 @@ public class MainPanel extends JPanel {
 		this.add(searchPanel, BorderLayout.PAGE_START);
 		
 		ContactsPanel contactsPanel = new ContactsPanel(this);
-		this.contactsPanel = contactsPanel;
+		JScrollPane contactsPane = new JScrollPane(contactsPanel);
+		this.contactsPanel = contactsPane;
 		this.add(contactsPanel, BorderLayout.LINE_START);
 	
-		ChatsOverview chatsOverview = new ChatsOverview(this);
+		ChatsPanel chatsOverview = new ChatsPanel(this);
 		JScrollPane chatsView = new JScrollPane(chatsOverview);
 		chatsOverview.setPreferredSize(new Dimension(900, 700));
 		this.chatsView = chatsView;
@@ -59,7 +61,7 @@ public class MainPanel extends JPanel {
 		return this.searchPanel;
 	}
 	
-	public ContactsPanel getContactsPanel() {
+	public JScrollPane getContactsPanel() {
 		return this.contactsPanel;
 	}
 	
@@ -71,19 +73,77 @@ public class MainPanel extends JPanel {
 		return this.statusPanel;
 	}
 	
+	public void updateHome() {
+		this.removeAll();
+		
+		SearchPanel searchPanel = new SearchPanel(this);
+		this.searchPanel = searchPanel;
+		this.add(searchPanel, BorderLayout.PAGE_START);
+		
+		ContactsPanel contactsPanel = new ContactsPanel(this);
+		JScrollPane contactsPane = new JScrollPane(contactsPanel);
+		this.contactsPanel = contactsPane;
+		this.add(contactsPanel, BorderLayout.LINE_START);
+	
+		ChatsPanel chatsOverview = new ChatsPanel(this);
+		JScrollPane chatsView = new JScrollPane(chatsOverview);
+		chatsOverview.setPreferredSize(new Dimension(900, 700));
+		this.chatsView = chatsView;
+		this.add(chatsView, BorderLayout.CENTER);
+		
+		StatusPanel statusPanel = new StatusPanel(this, true);
+		this.statusPanel = statusPanel;
+		this.add(statusPanel, BorderLayout.PAGE_END);
+		
+		this.repaint();
+		this.revalidate();
+		this.setVisible(true);
+	}
+	
 	public void updateHome(Map<Contact, BlockChain> chats) {
 		this.removeAll();
 		
 		SearchPanel searchPanel = new SearchPanel(this);
 		this.searchPanel = searchPanel;
-		this.add(searchPanel);
+		this.add(searchPanel, BorderLayout.PAGE_START);
 		
-		ChatsOverview chatsOverview = new ChatsOverview(this, chats);
+		ContactsPanel contactsPanel = new ContactsPanel(this);
+		JScrollPane contactsPane = new JScrollPane(contactsPanel);
+		this.contactsPanel = contactsPane;
+		this.add(contactsPanel, BorderLayout.LINE_START);
+	
+		ChatsPanel chatsOverview = new ChatsPanel(this, chats);
 		JScrollPane chatsView = new JScrollPane(chatsOverview);
+		chatsOverview.setPreferredSize(new Dimension(900, 700));
 		this.chatsView = chatsView;
-		this.add(chatsOverview);
+		this.add(chatsView, BorderLayout.CENTER);
 		
 		StatusPanel statusPanel = new StatusPanel(this, true);
+		this.statusPanel = statusPanel;
+		this.add(statusPanel, BorderLayout.PAGE_END);
+		
+		this.repaint();
+		this.revalidate();
+		this.setVisible(true);
+	}
+	
+	public void updateMessages(BlockChain chat) {
+		this.removeAll();
+		
+		JLabel contact = new JLabel(chat.getContact().getName());
+		contact.setForeground(Color.WHITE);
+		this.add(contact);
+		
+		MessagesPanel messagesOverview = new MessagesPanel(this, chat);
+		JScrollPane messagesView = new JScrollPane(messagesOverview);
+		this.messagesPanel = messagesView;
+		this.add(messagesView, BorderLayout.CENTER);
+		
+//		MessageWriter messageWriter = new MessageWriter(this, chat.getContact());
+//		this.messageWriter = messageWriter;
+//		this.add(messageWriter, BorderLayout.PAGE_END);
+		
+		StatusPanel statusPanel = new StatusPanel(this, false);
 		this.statusPanel = statusPanel;
 		this.add(statusPanel);
 		
