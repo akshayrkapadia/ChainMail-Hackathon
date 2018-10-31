@@ -46,8 +46,10 @@ public class Client implements IClient {
 		} catch (Exception e) {
 			while (true) {
 				String name = JOptionPane.showInputDialog("Name");
-				this.name = name;
-				break;
+				if (name != null) {
+					this.name = name;
+					break;
+				}
 			}
 			this.contacts = new ArrayList<Contact>();
 			this.chats = new HashMap<Contact, BlockChain>();
