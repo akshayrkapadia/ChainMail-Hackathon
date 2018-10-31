@@ -11,7 +11,7 @@ Encrypted Messenger
 ---
 
 ## Features
-1. Send end-to-end encrypted messages
-2. Secure your data with private blockchain
+1. End-to-End encyption using automatically generated RSA keys
+2. Utilizes the private blockchain to prevent message tampering
 
 ---
