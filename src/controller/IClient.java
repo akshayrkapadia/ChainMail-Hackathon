@@ -175,6 +175,7 @@ public interface IClient extends Serializable {
                         }
 					} catch (Exception e) {
 					}
+					break;
 				}
 			}
 		};
@@ -207,61 +208,10 @@ public interface IClient extends Serializable {
         				}
                     } catch (Exception e) {
                     }
+                    break;
                 }
             }
 		};
 		return clientThread;
 	}
-	
-//	default Thread createClientThread(Contact contact, Client client) {
-//		Thread clientThread = new Thread() {
-//			public void run() {
-//            	while (true) {
-//                    try {
-//                        Socket socket = new Socket(contact.getIPAddress(), 9806);
-//                        ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
-//                        output.writeObject(client.getPublicKey());
-//                    	System.out.println("Public key sent");
-//                        while (true) {
-//                            try {
-//                            	if (!(client.getNewMessage().equals(""))) {
-//                            		System.out.println("Writing new message");
-//                                    byte[] encryptedMessage = client.encryptMessage(client.getNewMessage(), contact);
-//                                    output.writeObject(encryptedMessage);
-//                                    client.setNewMessage("");
-//                            	}
-//                            } catch (Exception e) {
-//                            }
-//                        }
-//                    } catch (Exception e) {
-//                    }
-//                }
-//            }
-//		};
-//		return clientThread;
-//	}
-	
-//	default Thread createMessageWriterThread(Client client) {
-//		Thread messageWriterThread = new Thread() {
-//			public void run() {
-//				System.out.println("Message writer thread started");
-//				Scanner s = new Scanner(System.in);
-//				while (true) {
-//					System.out.println(client.isConnected());
-//					System.out.println(client.getNewMessage());
-//					System.out.println("\n");
-//					if (client.isConnected() && client.getNewMessage().equals("")) {
-//						System.out.println("Write new message");
-//						String message = s.nextLine();
-//						client.setNewMessage(message);
-//					}
-//				}
-////				s.close();
-//			}
-//		};
-//		return messageWriterThread;
-//	}
-	
-
-
 }

@@ -75,6 +75,7 @@ public class MainPanel extends JPanel {
 	}
 	
 	public void updateHome() {
+		this.getClient().setConnected(false);
 		this.removeAll();
 		
 		SearchPanel searchPanel = new SearchPanel(this);
@@ -102,6 +103,7 @@ public class MainPanel extends JPanel {
 	}
 	
 	public void updateHome(Map<Contact, BlockChain> chats) {
+		this.getClient().setConnected(false);
 		this.removeAll();
 		
 		SearchPanel searchPanel = new SearchPanel(this);
