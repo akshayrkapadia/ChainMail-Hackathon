@@ -144,11 +144,13 @@ public interface IClient extends Serializable {
 					try {
 						ServerSocket serverSocket = new ServerSocket(9806);
                         Socket socket = serverSocket.accept();
-                        System.out.println("Connected to " + contact.getName() + "@" + contact.getIPAddress());
                         ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
-                        PublicKey publicKey = (PublicKey) input.readObject();
-                        contact.setPublicKey(publicKey);
-                        System.out.println("Public key recieved");
+                        System.out.println("Server Connected to " + contact.getName() + "@" + contact.getIPAddress());
+                        if (chat.getLength() == 0) {
+                            PublicKey publicKey = (PublicKey) input.readObject();
+                            contact.setPublicKey(publicKey);
+                            System.out.println("Public key recieved");
+                        }
                         client.setConnected(true);
                         while (client.isConnected()) {
                             try {
@@ -189,22 +191,26 @@ public interface IClient extends Serializable {
                     try {
                         Socket socket = new Socket(contact.getIPAddress(), 9806);
                         ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
-                        output.writeObject(client.getPublicKey());
-                    	System.out.println("Public key sent");
-                    	System.out.println("Message writer thread started");
-        				Thread.sleep(1000);
-        				while (client.isConnected()) {
-        					if (!(client.getNewMessage().equals(""))) {
-	                            try {
-                            		System.out.println("Sending new message");
-                                    byte[] encryptedMessage = client.encryptMessage(client.getNewMessage(), contact);
-                                    Block block = new Block(chat.getLength()+1, encryptedMessage, contact, chat.getHead());
-                                    output.writeObject(block);
-                            		System.out.println("Message sent");
-                                    client.setNewMessage("");
-	                            } catch (Exception e) {
-	                            }
-        					}
+                        System.out.println("Client connected");
+                        if (chat.getLength() == 0) {
+                            output.writeObject(client.getPublicKey());
+                        	System.out.println("Public key sent");
+                        }
+        				while (true) {
+	        				while (client.isConnected()) {
+	        					if (!(client.getNewMessage().equals(""))) {
+		                            try {
+	                            		System.out.println("Sending new message");
+	                                    byte[] encryptedMessage = client.encryptMessage(client.getNewMessage(), contact);
+	                                    Block block = new Block(chat.getLength()+1, encryptedMessage, contact, chat.getHead());
+	                                    output.writeObject(block);
+	                            		System.out.println("Message sent");
+	                                    client.setNewMessage("");
+		                            } catch (Exception e) {
+		                            }
+	        					}
+	        				}
+	        				break;
         				}
                     } catch (Exception e) {
                     }
