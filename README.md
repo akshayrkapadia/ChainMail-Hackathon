@@ -1,4 +1,4 @@
-![ChainMail Logo](/images/icon.png)
+![ChainMail Logo](src/images/icon.png)
 
 # ChainMail
 Encrypted Messenger
