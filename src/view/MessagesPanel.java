@@ -19,8 +19,8 @@ public class MessagesPanel extends JPanel {
 	public MessagesPanel(MainPanel mainPanel, BlockChain chat) {
 		this.mainPanel = mainPanel;
 		this.chat = chat;
-		this.setMaximumSize(new Dimension(900, 780));
-		this.setPreferredSize(new Dimension(900, 780));
+//		this.setMaximumSize(new Dimension(900, 780));
+		this.setPreferredSize(new Dimension(900, 720));
 		this.setLayout(new GridLayout(chat.getLength(), 1));
 		this.setBackground(new Color(230, 230, 230));
 		

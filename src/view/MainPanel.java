@@ -21,6 +21,7 @@ public class MainPanel extends JPanel {
 	private ChatsPanel chatsPanel;
 	private StatusPanel statusPanel;
 	private JScrollPane chatsView;
+	private MessageWriter messageWriter;
 	private JScrollPane messagesPanel;
 	
 	public MainPanel(MainFrame mainFrame) {
@@ -131,21 +132,32 @@ public class MainPanel extends JPanel {
 		this.removeAll();
 		
 		JLabel contact = new JLabel(chat.getContact().getName());
-		contact.setForeground(Color.WHITE);
-		this.add(contact);
+		contact.setForeground(Color.BLACK);
+		contact.setAlignmentX(CENTER_ALIGNMENT);
+		contact.setAlignmentY(TOP_ALIGNMENT);
+		this.add(contact, BorderLayout.PAGE_START);
 		
 		MessagesPanel messagesOverview = new MessagesPanel(this, chat);
 		JScrollPane messagesView = new JScrollPane(messagesOverview);
 		this.messagesPanel = messagesView;
-		this.add(messagesView, BorderLayout.CENTER);
 		
-//		MessageWriter messageWriter = new MessageWriter(this, chat.getContact());
-//		this.messageWriter = messageWriter;
-//		this.add(messageWriter, BorderLayout.PAGE_END);
+		MessageWriter messageWriter = new MessageWriter(this, chat.getContact());
+		this.messageWriter = messageWriter;
+		messageWriter.setAlignmentX(CENTER_ALIGNMENT);
+		messageWriter.setAlignmentY(BOTTOM_ALIGNMENT);
+		
+		JPanel messageUnit = new JPanel();
+		messageUnit.add(messagesView);
+		messageUnit.add(messageWriter);
+		messageUnit.setAlignmentX(CENTER_ALIGNMENT);
+		messageUnit.setAlignmentY(CENTER_ALIGNMENT);
+		this.add(messageUnit, BorderLayout.CENTER);
 		
 		StatusPanel statusPanel = new StatusPanel(this, false);
 		this.statusPanel = statusPanel;
-		this.add(statusPanel);
+		statusPanel.setAlignmentX(CENTER_ALIGNMENT);
+		statusPanel.setAlignmentY(BOTTOM_ALIGNMENT);
+		this.add(statusPanel, BorderLayout.PAGE_END);
 		
 		this.repaint();
 		this.revalidate();

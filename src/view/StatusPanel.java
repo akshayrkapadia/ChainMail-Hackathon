@@ -120,9 +120,7 @@ public class StatusPanel extends JPanel implements ActionListener {
 		} else if (e.getActionCommand().equals("Start Chat")) {
 			ArrayList<String> optionsList = new ArrayList<String>();
 			for (Contact contact : this.getMainPanel().getClient().getContacts()) {
-				if (!(this.getMainPanel().getClient().getChats().containsKey(contact))) {
-					optionsList.add(contact.getName());
-				}
+				optionsList.add(contact.getName());
 			}
 			if (optionsList.size() == 0) {
 				
