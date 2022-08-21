@@ -15,3 +15,5 @@ Encrypted Messenger
 2. Utilizes the private blockchain to prevent message tampering
 
 ---
+
+This project was made during the HackNC Hackathon. I am currently in the process of rewriting and improving this program. You can find the updated version at: ![ChainMail](https://github.com/akshayrkapadia/ChainMail)
