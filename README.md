@@ -16,4 +16,4 @@ Encrypted Messenger
 
 ---
 
-This project was made during the HackNC Hackathon. I am currently in the process of rewriting and improving this program. You can find the updated version at: ![ChainMail](https://github.com/akshayrkapadia/ChainMail)
+This project was made during the HackNC Hackathon. I am currently in the process of rewriting and improving this program. You can find the updated version at: [ChainMail](https://github.com/akshayrkapadia/ChainMail)
